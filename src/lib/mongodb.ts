@@ -17,7 +17,6 @@ const connectToDB = async () => {
   }
   cached.conn = await cached.promise;
   (global as any).mongoose = cached;
-  console.log((global as any).mongoose);
   return cached.conn;
 };
 
