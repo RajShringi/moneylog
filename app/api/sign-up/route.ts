@@ -1,8 +1,9 @@
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
+import bcrypt from "bcrypt";
 
 export async function POST(request: Request) {
-  dbConnect();
+  await dbConnect();
   try {
     const { username, email, password } = await request.json();
 
@@ -17,21 +18,28 @@ export async function POST(request: Request) {
     if (user) {
       return Response.json({
         success: false,
-        message: "User already exists",
+        message: "User already exists with this username or email",
       });
     }
 
-    const newUser = await User.create({ username, email, password });
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
     return Response.json({
       success: true,
       message: "User created successfully",
-      data: {
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-      },
     });
   } catch (error) {
     console.log(error);
+    return Response.json({
+      success: false,
+      message: "Error creating user",
+    });
   }
 }
