@@ -8,18 +8,24 @@ export async function POST(request: Request) {
     const { username, email, password } = await request.json();
 
     if (!username || !email || !password) {
-      return Response.json({
-        success: false,
-        message: "Please provide username, email, password",
-      });
+      return Response.json(
+        {
+          success: false,
+          message: "Please provide username, email, password",
+        },
+        { status: 400 }
+      );
     }
 
     const user = await User.findOne({ $or: [{ username }, { email }] });
     if (user) {
-      return Response.json({
-        success: false,
-        message: "User already exists with this username or email",
-      });
+      return Response.json(
+        {
+          success: false,
+          message: "User already exists with this username or email",
+        },
+        { status: 409 }
+      );
     }
 
     const saltRounds = 10;
@@ -31,15 +37,21 @@ export async function POST(request: Request) {
       password: hashedPassword,
     });
 
-    return Response.json({
-      success: true,
-      message: "User created successfully",
-    });
+    return Response.json(
+      {
+        success: true,
+        message: "User created successfully",
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
-    return Response.json({
-      success: false,
-      message: "Error creating user",
-    });
+    return Response.json(
+      {
+        success: false,
+        message: "Error creating user",
+      },
+      { status: 500 }
+    );
   }
 }

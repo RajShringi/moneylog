@@ -23,8 +23,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const formSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long" }),
   email: z.string().email({
     message: "Invalid email address",
   }),
@@ -45,6 +49,7 @@ export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
     },
@@ -52,22 +57,23 @@ export default function Page() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const result = await signIn("credentials", {
+      const result = await axios.post("/api/sign-up", {
+        username: data.username,
         email: data.email,
         password: data.password,
-        redirect: false,
       });
-
-      if (result?.error) {
-        toast.error("Invalid email or password.");
-        return;
+      if (result.data.success) {
+        toast.success("Account created successfully! Please sign in.");
+        router.push("/sign-in");
+      } else {
+        toast.error(result.data.message || "Error creating account.");
       }
-
-      toast.success("Successfully signed in!");
-
-      router.push("/dashboard");
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Error creating account.");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     }
   }
 
@@ -75,15 +81,33 @@ export default function Page() {
     <div className="flex justify-center items-center min-h-screen">
       <Card className="w-full sm:max-w-md">
         <CardHeader>
-          <CardTitle>Sign-In</CardTitle>
+          <CardTitle>Sign-Up</CardTitle>
           <CardDescription>
-            Welcome to moneylog! Please enter your credentials to access your
-            account.
+            Join Moneylog! Sign up to start your anonymous adventure
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
+              <Controller
+                name="username"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="username">Username</FieldLabel>
+                    <Input
+                      {...field}
+                      id="username"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="please enter your username"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
               <Controller
                 name="email"
                 control={form.control}
