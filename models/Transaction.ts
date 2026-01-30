@@ -1,17 +1,8 @@
-import { Document, model, models, Schema, Types } from "mongoose";
+import { TRANSACTION_TYPES } from "@/constants";
+import { ITransactionDocument } from "@/types/transaction.types";
+import { model, models, Schema } from "mongoose";
 
-export interface ITransaction extends Document {
-  userId: Types.ObjectId;
-  amount: number;
-  type: "income" | "expense";
-  categoryId?: Types.ObjectId;
-  note?: string;
-  date: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-const transactionSchema = new Schema<ITransaction>(
+const transactionSchema = new Schema<ITransactionDocument>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -24,7 +15,7 @@ const transactionSchema = new Schema<ITransaction>(
     },
     type: {
       type: String,
-      enum: ["income", "expense"],
+      enum: TRANSACTION_TYPES,
       required: true,
     },
     categoryId: {
@@ -40,10 +31,11 @@ const transactionSchema = new Schema<ITransaction>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Transaction =
-  models.Transaction || model<ITransaction>("Transaction", transactionSchema);
+  models.Transaction ||
+  model<ITransactionDocument>("Transaction", transactionSchema);
 
 export default Transaction;

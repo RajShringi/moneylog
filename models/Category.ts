@@ -1,15 +1,8 @@
-import { Document, model, models, Schema, Types } from "mongoose";
+import { TRANSACTION_TYPES } from "@/constants";
+import { ICategoryDocument } from "@/types/category.types";
+import { model, models, Schema } from "mongoose";
 
-export interface ICategory extends Document {
-  name: string;
-  type: "income" | "expense";
-  userId: Types.ObjectId;
-  color?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-const categorySchema = new Schema<ICategory>(
+const categorySchema = new Schema<ICategoryDocument>(
   {
     name: {
       type: String,
@@ -18,7 +11,7 @@ const categorySchema = new Schema<ICategory>(
     },
     type: {
       type: String,
-      enum: ["income", "expense"],
+      enum: TRANSACTION_TYPES,
       required: true,
     },
     userId: {
@@ -30,10 +23,10 @@ const categorySchema = new Schema<ICategory>(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Category =
-  models.Category || model<ICategory>("Category", categorySchema);
+  models.Category || model<ICategoryDocument>("Category", categorySchema);
 
 export default Category;
