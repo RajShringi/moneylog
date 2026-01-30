@@ -55,6 +55,7 @@ export default function ManageCategoryForm() {
       const response = await createCategory(data);
       if (response.success) {
         toast.success("Category created successfully");
+        form.reset();
       } else {
         toast.error(response.error);
       }

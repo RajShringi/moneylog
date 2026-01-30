@@ -82,6 +82,7 @@ export default function ManageTransactionForm({
       const response = await createTransaction(data);
       if (response.success) {
         toast.success("Transaction created successfully");
+        form.reset();
       } else {
         toast.error(response.error);
       }
