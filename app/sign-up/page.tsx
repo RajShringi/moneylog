@@ -21,7 +21,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -152,8 +151,12 @@ export default function Page() {
         </CardContent>
         <CardFooter>
           <Field orientation="horizontal">
-            <Button type="submit" form="login-form">
-              Submit
+            <Button
+              disabled={form.formState.isSubmitting}
+              type="submit"
+              form="login-form"
+            >
+              {form.formState.isSubmitting ? "Loading" : "Submit"}
             </Button>
           </Field>
         </CardFooter>
