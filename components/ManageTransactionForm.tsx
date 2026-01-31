@@ -57,7 +57,7 @@ export default function ManageTransactionForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: undefined,
-      notes: "",
+      note: "",
       type: "income",
       categoryId: "",
       date: new Date(),
@@ -133,18 +133,18 @@ export default function ManageTransactionForm({
                 )}
               />
 
-              {/* Notes */}
+              {/* Note */}
               <Controller
-                name="notes"
+                name="note"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-notes">Notes</FieldLabel>
+                    <FieldLabel htmlFor="form-notes">Note</FieldLabel>
                     <InputGroup>
                       <InputGroupTextarea
                         {...field}
-                        id="form-notes"
-                        placeholder="Write any notes for transaction"
+                        id="form-note"
+                        placeholder="Write any note for transaction"
                         rows={6}
                         className="min-h-24 resize-none"
                         aria-invalid={fieldState.invalid}

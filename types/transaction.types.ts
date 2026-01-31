@@ -5,9 +5,9 @@ export type TransactionType = "income" | "expense";
 export interface ITransaction {
   _id: string;
   amount: number;
-  notes: string;
+  note: string;
   type: TransactionType;
-  categoryId: string;
+  categoryId?: string;
   date: Date;
 }
 
@@ -22,3 +22,15 @@ export interface ITransactionDocument extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type TransactionPreview = Pick<
+  ITransaction,
+  "_id" | "amount" | "note" | "type" | "date"
+> & {
+  category: string;
+};
+
+export type TransactionsPageResponse = {
+  transactions: TransactionPreview[];
+  total: number;
+};
