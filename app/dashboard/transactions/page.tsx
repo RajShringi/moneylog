@@ -1,6 +1,7 @@
 import { columns } from "@/components/Columns";
 import DataTable from "@/components/DataTable";
 import ManageTransactionForm from "@/components/ManageTransactionForm";
+import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
 
@@ -27,6 +28,11 @@ export default async function TransactionsPage({
         <DataTable
           columns={columns}
           data={transactionsResult.data.transactions}
+          pagination={{
+            currentPage,
+            pageSize: TRANSACTIONS_PAGE_LIMIT,
+            total: transactionsResult.data.total,
+          }}
         />
         <div className="my-4">
           <ManageTransactionForm allCategories={categoriesResult.data} />
