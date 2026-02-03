@@ -1,4 +1,3 @@
-"use client";
 import { TransactionPreview } from "@/types/transaction.types";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -20,7 +19,3 @@ export const columns: ColumnDef<TransactionPreview>[] = [
     header: "Amount",
   },
 ];
-
-export default function Columns() {
-  return <div></div>;
-}
