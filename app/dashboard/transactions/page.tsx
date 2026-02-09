@@ -1,6 +1,7 @@
 import { columns } from "@/components/Columns";
 import DataTable from "@/components/DataTable";
 import ManageTransactionForm from "@/components/ManageTransactionForm";
+import TransactionSearchInput from "@/components/TransactionSearchInput";
 import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
@@ -14,26 +15,31 @@ interface TransactionsPageProps {
 export default async function TransactionsPage({
   searchParams,
 }: TransactionsPageProps) {
-  const { page } = await searchParams;
+  const { page, search } = await searchParams;
   const currentPage = Number(page) || 1;
+  const searchStr = typeof search === "string" ? String(search) : "";
+
   const [categoriesResult, transactionsResult] = await Promise.all([
     fetchCategories(),
-    fetchTransactions(currentPage),
+    fetchTransactions(currentPage, searchStr),
   ]);
 
   if (transactionsResult.success && categoriesResult.success) {
     return (
       <div>
         <p>Transactions</p>
-        <DataTable
-          columns={columns}
-          data={transactionsResult.data.transactions}
-          pagination={{
-            currentPage,
-            pageSize: TRANSACTIONS_PAGE_LIMIT,
-            total: transactionsResult.data.total,
-          }}
-        />
+        <div className="max-w-3xl mx-auto flex flex-col gap-4">
+          <TransactionSearchInput />
+          <DataTable
+            columns={columns}
+            data={transactionsResult.data.transactions}
+            pagination={{
+              currentPage,
+              pageSize: TRANSACTIONS_PAGE_LIMIT,
+              total: transactionsResult.data.total,
+            }}
+          />
+        </div>
         <div className="my-4">
           <ManageTransactionForm allCategories={categoriesResult.data} />
         </div>

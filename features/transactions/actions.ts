@@ -13,6 +13,7 @@ import {
   TransactionPreview,
   TransactionsPageResponse,
 } from "@/types/transaction.types";
+import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
 // create Transaction
@@ -58,6 +59,7 @@ export async function createTransaction(
 // fetch transaction by limit
 export async function fetchTransactions(
   page: number,
+  search: string,
 ): Promise<ActionResult<TransactionsPageResponse>> {
   try {
     const session = await auth();
@@ -65,23 +67,63 @@ export async function fetchTransactions(
       return { success: false, error: "user is not logged-in" };
     }
     await dbConnect();
-
     const skip = (page - 1) * TRANSACTIONS_PAGE_LIMIT;
-    const [transactions, total] = await Promise.all([
-      Transaction.find({ userId: session.user.id })
-        .populate("categoryId")
-        .limit(TRANSACTIONS_PAGE_LIMIT)
-        .skip(skip)
-        .lean(),
-      Transaction.countDocuments({ userId: session.user.id }),
-    ]);
+    const pipeline = [
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(session.user.id),
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryId",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $match: {
+          $or: [
+            { note: { $regex: search, $options: "i" } },
+            {
+              "category.name": { $regex: search, $options: "i" },
+            },
+          ],
+        },
+      },
+      {
+        $facet: {
+          transactions: [
+            {
+              $skip: skip,
+            },
+            {
+              $limit: TRANSACTIONS_PAGE_LIMIT,
+            },
+          ],
+          total: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+    ];
+
+    const response = await Transaction.aggregate(pipeline);
+    const transactions = response[0]?.transactions ?? [];
+    const total = response[0]?.total[0]?.count ?? 0;
 
     const serializeTransactions = transactions.map(
       (transaction: any): TransactionPreview => ({
         _id: transaction._id.toString(),
         amount: transaction.amount,
         date: transaction.date,
-        category: transaction.categoryId.name,
+        category: transaction.category.name,
         note: transaction.note,
         type: transaction.type,
       }),
