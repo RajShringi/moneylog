@@ -22,4 +22,4 @@ export const CATEGORY_COLORS = [
 ] as const;
 
 export const TRANSACTION_TYPES = ["income", "expense"] as const;
-export const TRANSACTIONS_PAGE_LIMIT = 2;
+export const TRANSACTIONS_PAGE_LIMIT = 3;

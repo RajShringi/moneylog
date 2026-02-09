@@ -41,7 +41,7 @@ export default function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
