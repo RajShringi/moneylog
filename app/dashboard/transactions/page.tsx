@@ -5,6 +5,7 @@ import TransactionSearchInput from "@/components/TransactionSearchInput";
 import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
+import { Suspense } from "react";
 
 interface TransactionsPageProps {
   searchParams: {
@@ -29,16 +30,20 @@ export default async function TransactionsPage({
       <div>
         <p>Transactions</p>
         <div className="max-w-3xl mx-auto flex flex-col gap-4">
-          <TransactionSearchInput />
-          <DataTable
-            columns={columns}
-            data={transactionsResult.data.transactions}
-            pagination={{
-              currentPage,
-              pageSize: TRANSACTIONS_PAGE_LIMIT,
-              total: transactionsResult.data.total,
-            }}
-          />
+          <Suspense fallback={<div>Loading search...</div>}>
+            <TransactionSearchInput />
+          </Suspense>
+          <Suspense fallback={<div>Loading table...</div>}>
+            <DataTable
+              columns={columns}
+              data={transactionsResult.data.transactions}
+              pagination={{
+                currentPage,
+                pageSize: TRANSACTIONS_PAGE_LIMIT,
+                total: transactionsResult.data.total,
+              }}
+            />
+          </Suspense>
         </div>
         <div className="my-4">
           <ManageTransactionForm allCategories={categoriesResult.data} />
