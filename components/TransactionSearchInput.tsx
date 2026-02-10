@@ -1,12 +1,13 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import useDebounce from "@/hooks/useDebounce";
 
 export default function TransactionSearchInput() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const isFirstRender = useRef(true);
 
   const [search, setSearch] = useState<string>(
     searchParams.get("search") ?? "",
@@ -19,6 +20,10 @@ export default function TransactionSearchInput() {
   const debounceSearch = useDebounce(search);
 
   useEffect(() => {
+    if(isFirstRender.current){
+      isFirstRender.current = false;
+      return;
+    }
     const params = new URLSearchParams(searchParams);
     if (debounceSearch) {
       params.set("search", debounceSearch);
