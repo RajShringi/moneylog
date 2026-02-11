@@ -38,6 +38,7 @@ export default function DataTable<TData, TValue>({
     pageCount: pagination
       ? Math.ceil(pagination.total / TRANSACTIONS_PAGE_LIMIT)
       : -1,
+    manualSorting: true,
   });
 
   return (
