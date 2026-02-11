@@ -1,11 +1,12 @@
 "use client";
 import { TransactionPreview } from "@/types/transaction.types";
 import { ColumnDef } from "@tanstack/react-table";
+import SortableHeader from "./SortableHeader";
 
 export const columns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "date",
-    header: "Date",
+    header: () => <SortableHeader label="Date" columnKey="date" />,
     cell: ({ getValue }) => {
       const value = getValue() as string | Date;
       return new Date(value).toLocaleDateString("en-IN", {
@@ -29,6 +30,6 @@ export const columns: ColumnDef<TransactionPreview>[] = [
   },
   {
     accessorKey: "amount",
-    header: "Amount",
+    header: () => <SortableHeader label="Amount" columnKey="amount" />,
   },
 ];

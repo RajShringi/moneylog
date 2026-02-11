@@ -2,7 +2,6 @@ import { columns } from "@/components/Columns";
 import DataTable from "@/components/DataTable";
 import ManageTransactionForm from "@/components/ManageTransactionForm";
 import TransactionSearchInput from "@/components/TransactionSearchInput";
-import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
 import { Suspense } from "react";
@@ -16,13 +15,22 @@ interface TransactionsPageProps {
 export default async function TransactionsPage({
   searchParams,
 }: TransactionsPageProps) {
-  const { page, search } = await searchParams;
-  const currentPage = Number(page) || 1;
-  const searchStr = typeof search === "string" ? String(search) : "";
+  const {
+    page: pageParam,
+    search: searchParam,
+    sortBy: sortByParam,
+    sortOrder: orderParam,
+  } = await searchParams;
+  const currentPage = Number(pageParam) || 1;
+  const search = typeof searchParam === "string" ? searchParam.trim() : "";
+  const sortBy =
+    sortByParam === "amount" || sortByParam === "date" ? sortByParam : "date";
+  const sortOrder =
+    orderParam === "asc" || orderParam === "desc" ? orderParam : "desc";
 
   const [categoriesResult, transactionsResult] = await Promise.all([
     fetchCategories(),
-    fetchTransactions(currentPage, searchStr),
+    fetchTransactions(currentPage, search, sortBy, sortOrder),
   ]);
 
   if (transactionsResult.success && categoriesResult.success) {
@@ -39,7 +47,6 @@ export default async function TransactionsPage({
               data={transactionsResult.data.transactions}
               pagination={{
                 currentPage,
-                pageSize: TRANSACTIONS_PAGE_LIMIT,
                 total: transactionsResult.data.total,
               }}
             />

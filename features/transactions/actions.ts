@@ -9,11 +9,13 @@ import {
   transactionSchema,
 } from "@/schemas/transactionsSchema";
 import { ActionResult } from "@/types/action.type";
+import { SortBy, SortOrder } from "@/types/pagination.types";
 import {
   TransactionPreview,
   TransactionsPageResponse,
 } from "@/types/transaction.types";
 import mongoose from "mongoose";
+import { PipelineStage } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 // create Transaction
@@ -60,6 +62,8 @@ export async function createTransaction(
 export async function fetchTransactions(
   page: number,
   search: string,
+  sortBy: SortBy,
+  sortOrder: SortOrder,
 ): Promise<ActionResult<TransactionsPageResponse>> {
   try {
     const session = await auth();
@@ -68,7 +72,8 @@ export async function fetchTransactions(
     }
     await dbConnect();
     const skip = (page - 1) * TRANSACTIONS_PAGE_LIMIT;
-    const pipeline = [
+
+    const pipeline: PipelineStage[] = [
       {
         $match: {
           userId: new mongoose.Types.ObjectId(session.user.id),
@@ -98,6 +103,9 @@ export async function fetchTransactions(
       {
         $facet: {
           transactions: [
+            {
+              $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 },
+            },
             {
               $skip: skip,
             },
