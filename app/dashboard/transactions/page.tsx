@@ -4,6 +4,7 @@ import ManageTransactionForm from "@/components/ManageTransactionForm";
 import TransactionSearchInput from "@/components/TransactionSearchInput";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 interface TransactionsPageProps {
@@ -21,6 +22,12 @@ export default async function TransactionsPage({
     sortBy: sortByParam,
     sortOrder: orderParam,
   } = await searchParams;
+  const validSortBy = sortByParam === "amount" || sortByParam === "date";
+  const validSortOrder = orderParam === "asc" || orderParam === "desc";
+  if (!validSortBy || !validSortOrder) {
+    redirect("/dashboard/transactions?sortBy=date&sortOrder=desc");
+  }
+
   const currentPage = Number(pageParam) || 1;
   const search = typeof searchParam === "string" ? searchParam.trim() : "";
   const sortBy =
