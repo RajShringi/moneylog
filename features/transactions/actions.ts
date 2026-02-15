@@ -9,6 +9,7 @@ import {
   transactionSchema,
 } from "@/schemas/transactionsSchema";
 import { ActionResult } from "@/types/action.type";
+import { SummaryTotal } from "@/types/dashboard.type";
 import { SortBy, SortOrder } from "@/types/pagination.types";
 import {
   TransactionPreview,
@@ -147,6 +148,73 @@ export async function fetchTransactions(
       success: false,
       error:
         error instanceof Error ? error.message : "Transactions fetch failed",
+    };
+  }
+}
+
+// fetch dashboard summary card info
+export async function fetchDashboardSummary(
+  from: Date,
+  to: Date,
+): Promise<ActionResult<SummaryTotal>> {
+  try {
+    await dbConnect();
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "user is not logged-in" };
+    }
+
+    const pipeline: PipelineStage[] = [
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(session.user.id),
+          date: { $gte: from, $lte: to },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: {
+            $sum: {
+              $cond: [{ $eq: ["$type", "income"] }, "$amount", 0],
+            },
+          },
+          totalExpense: {
+            $sum: {
+              $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          income: "$totalIncome",
+          expense: "$totalExpense",
+          balance: { $subtract: ["$totalIncome", "$totalExpense"] },
+        },
+      },
+    ];
+
+    const summary = await Transaction.aggregate<SummaryTotal>(pipeline);
+    const data: SummaryTotal = {
+      balance: summary[0].balance ?? 0,
+      income: summary[0].income ?? 0,
+      expense: summary[0].expense ?? 0,
+    };
+
+    return {
+      success: true,
+      data,
+      message: "summary fetched successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Dashboard summary fetch failed",
     };
   }
 }

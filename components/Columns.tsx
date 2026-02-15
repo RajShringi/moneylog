@@ -2,6 +2,7 @@
 import { TransactionPreview } from "@/types/transaction.types";
 import { ColumnDef } from "@tanstack/react-table";
 import SortableHeader from "./SortableHeader";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<TransactionPreview>[] = [
   {
@@ -9,11 +10,7 @@ export const columns: ColumnDef<TransactionPreview>[] = [
     header: () => <SortableHeader label="Date" columnKey="date" />,
     cell: ({ getValue }) => {
       const value = getValue() as string | Date;
-      return new Date(value).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
+      return format(value, "dd MMM, yyyy");
     },
   },
   {
