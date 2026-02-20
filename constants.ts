@@ -23,3 +23,12 @@ export const CATEGORY_COLORS = [
 
 export const TRANSACTION_TYPES = ["income", "expense"] as const;
 export const TRANSACTIONS_PAGE_LIMIT = 3;
+
+export const presetDateRanges = [
+  { value: "today", label: "Today" },
+  { value: "this week", label: "This week" },
+  { value: "this month", label: "This month" },
+  { value: "this year", label: "This year" },
+  { value: "last week", label: "Last week" },
+  { value: "last month", label: "Last month" },
+] as const;
