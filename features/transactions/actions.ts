@@ -15,6 +15,7 @@ import {
   TransactionPreview,
   TransactionsPageResponse,
 } from "@/types/transaction.types";
+import { endOfDay } from "date-fns";
 import mongoose from "mongoose";
 import { PipelineStage } from "mongoose";
 import { revalidatePath } from "next/cache";
@@ -168,7 +169,7 @@ export async function fetchDashboardSummary(
       {
         $match: {
           userId: new mongoose.Types.ObjectId(session.user.id),
-          date: { $gte: from, $lte: to },
+          date: { $gte: from, $lte: endOfDay(to) },
         },
       },
       {
@@ -198,9 +199,9 @@ export async function fetchDashboardSummary(
 
     const summary = await Transaction.aggregate<SummaryTotal>(pipeline);
     const data: SummaryTotal = {
-      balance: summary[0].balance ?? 0,
-      income: summary[0].income ?? 0,
-      expense: summary[0].expense ?? 0,
+      balance: summary[0]?.balance ?? 0,
+      income: summary[0]?.income ?? 0,
+      expense: summary[0]?.expense ?? 0,
     };
 
     return {

@@ -1,4 +1,5 @@
 import SummaryCard from "@/components/SummaryCard";
+import DatePickerWithRange from "@/components/ui/DatePickerWithRange";
 import { fetchDashboardSummary } from "@/features/transactions/actions";
 import { parseDateRange } from "@/schemas/dateRangeSchema";
 import { PiggyBank, TrendingDown, TrendingUp } from "lucide-react";
@@ -13,13 +14,14 @@ export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
   const params = await searchParams;
-  const { from, to } = parseDateRange({ from: params.form, to: params.to });
+  const { from, to } = parseDateRange({ from: params.from, to: params.to });
 
   const dashboardSummaryResult = await fetchDashboardSummary(from, to);
   if (dashboardSummaryResult.success) {
     const { balance, income, expense } = dashboardSummaryResult.data;
     return (
       <div className="flex flex-col flex-1 gap-4">
+        <DatePickerWithRange from={from} to={to} />
         <div className="flex flex-col gap-2">
           <div>Date-picker</div>
           <div className="flex items-center gap-4">
