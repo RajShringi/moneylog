@@ -17,34 +17,33 @@ export default async function DashboardPage({
   const { from, to } = parseDateRange({ from: params.from, to: params.to });
 
   const dashboardSummaryResult = await fetchDashboardSummary(from, to);
+
   if (dashboardSummaryResult.success) {
-    const { balance, income, expense } = dashboardSummaryResult.data;
+    const { available_balance, income, expense, balance_change } =
+      dashboardSummaryResult.data.summary;
+
     return (
       <div className="flex flex-col flex-1 gap-4">
-        <DatePickerWithRange from={from} to={to} />
         <div className="flex flex-col gap-2">
-          <div>Date-picker</div>
-          <div className="flex items-center gap-4">
+          <DatePickerWithRange from={from} to={to} />
+
+          <div className="grid grid-cols-4 gap-4">
             <SummaryCard
-              amount={balance}
-              heading="Balance"
-              from={from}
-              to={to}
-              icon={<PiggyBank size={32} className="text-blue-400" />}
+              amount={available_balance}
+              heading="Availabe balance"
             />
-            <SummaryCard
-              amount={income}
-              heading="Income"
-              from={from}
-              to={to}
-              icon={<TrendingUp size={32} className="text-green-400" />}
-            />
+            <SummaryCard amount={income} heading="Income" from={from} to={to} />
             <SummaryCard
               amount={expense}
               heading="Expense"
               from={from}
               to={to}
-              icon={<TrendingDown size={32} className="text-red-400" />}
+            />
+            <SummaryCard
+              amount={balance_change}
+              heading="Balance change"
+              from={from}
+              to={to}
             />
           </div>
         </div>

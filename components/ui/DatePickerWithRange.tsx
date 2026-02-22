@@ -51,8 +51,8 @@ export default function DatePickerWithRange({
   };
 
   const handleDateChange = (range: DateRange | undefined) => {
-    setDate(range);
     if (!range?.from || !range?.to) return;
+    setDate(range);
     setSelectedPreset(undefined);
   };
 

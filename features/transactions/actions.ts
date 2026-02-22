@@ -9,7 +9,7 @@ import {
   transactionSchema,
 } from "@/schemas/transactionsSchema";
 import { ActionResult } from "@/types/action.type";
-import { SummaryTotal } from "@/types/dashboard.type";
+import { DashboardSummary } from "@/types/dashboard.type";
 import { SortBy, SortOrder } from "@/types/pagination.types";
 import {
   TransactionPreview,
@@ -157,7 +157,7 @@ export async function fetchTransactions(
 export async function fetchDashboardSummary(
   from: Date,
   to: Date,
-): Promise<ActionResult<SummaryTotal>> {
+): Promise<ActionResult<DashboardSummary>> {
   try {
     await dbConnect();
     const session = await auth();
@@ -169,39 +169,80 @@ export async function fetchDashboardSummary(
       {
         $match: {
           userId: new mongoose.Types.ObjectId(session.user.id),
-          date: { $gte: from, $lte: endOfDay(to) },
         },
       },
       {
-        $group: {
-          _id: null,
-          totalIncome: {
-            $sum: {
-              $cond: [{ $eq: ["$type", "income"] }, "$amount", 0],
+        $facet: {
+          overallTotals: [
+            {
+              $group: {
+                _id: null,
+                income: {
+                  $sum: {
+                    $cond: [{ $eq: ["$type", "income"] }, "$amount", 0],
+                  },
+                },
+                expense: {
+                  $sum: {
+                    $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0],
+                  },
+                },
+              },
             },
-          },
-          totalExpense: {
-            $sum: {
-              $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0],
+            {
+              $project: {
+                _id: 0,
+                balance: { $subtract: ["$income", "$expense"] },
+              },
             },
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          income: "$totalIncome",
-          expense: "$totalExpense",
-          balance: { $subtract: ["$totalIncome", "$totalExpense"] },
+          ],
+
+          periodTotals: [
+            {
+              $match: {
+                date: { $gte: from, $lte: endOfDay(to) },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                income: {
+                  $sum: {
+                    $cond: [{ $eq: ["$type", "income"] }, "$amount", 0],
+                  },
+                },
+                expense: {
+                  $sum: {
+                    $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0],
+                  },
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                income: 1,
+                expense: 1,
+                balanceChange: { $subtract: ["$income", "$expense"] },
+              },
+            },
+          ],
         },
       },
     ];
 
-    const summary = await Transaction.aggregate<SummaryTotal>(pipeline);
-    const data: SummaryTotal = {
-      balance: summary[0]?.balance ?? 0,
-      income: summary[0]?.income ?? 0,
-      expense: summary[0]?.expense ?? 0,
+    const [result] = await Transaction.aggregate(pipeline);
+
+    const overall = result?.overallTotals?.[0];
+    const period = result?.periodTotals?.[0];
+
+    const data: DashboardSummary = {
+      summary: {
+        available_balance: overall?.balance ?? 0,
+        income: period?.income ?? 0,
+        expense: period?.expense ?? 0,
+        balance_change: period?.balanceChange ?? 0,
+      },
     };
 
     return {
