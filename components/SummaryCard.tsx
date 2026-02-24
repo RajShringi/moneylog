@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
 import { Card } from "./ui/card";
 import { format } from "date-fns";
+import { formatCurrency } from "@/lib/currency";
 
 interface SummaryCardProps {
   heading: "Availabe balance" | "Income" | "Expense" | "Balance change";
@@ -22,7 +22,7 @@ export default function SummaryCard({
     <Card className="w-full max-w-sm px-4">
       <div>
         <h3 className="text-xl font-bold">{heading}</h3>
-        <div className="text-2xl font-bold">${amount}</div>
+        <div className="text-2xl font-bold">{formatCurrency(amount)}</div>
       </div>
       <p className="text-sm text-gray-500">
         {from && to ? (
