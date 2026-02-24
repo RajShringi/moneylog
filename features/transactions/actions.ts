@@ -24,40 +24,47 @@ import { revalidatePath } from "next/cache";
 export async function createTransaction(
   data: transactionInput,
 ): Promise<ActionResult<null>> {
-  // TODO: use try catch here.
-  const session = await auth();
-  if (!session || !session.user) {
-    return { success: false, error: "User is not logged-in" };
-  }
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "User is not logged-in" };
+    }
 
-  await dbConnect();
+    await dbConnect();
 
-  // Validate the data using zod
-  const validated = transactionSchema.safeParse(data);
-  if (!validated.success) {
+    // Validate the data using zod
+    const validated = transactionSchema.safeParse(data);
+    if (!validated.success) {
+      return {
+        success: false,
+        error: "Invalid data",
+      };
+    }
+
+    const amount = Math.round(data.amount * 100);
+    const transaction = new Transaction({
+      userId: session.user.id,
+      amount,
+      type: data.type,
+      categoryId: data.categoryId || undefined,
+      note: data.note || "",
+      date: data.date,
+    });
+
+    await transaction.save();
+    revalidatePath("/dashboard/transactions");
+    return {
+      success: true,
+      data: null,
+      message: "Transaction created successfully",
+    };
+  } catch (error) {
     return {
       success: false,
-      error: "Invalid data",
+      error:
+        error instanceof Error ? error.message : "Error creating trasaction",
     };
   }
-
-  // Create the transaction
-  await Transaction.create({
-    userId: session.user.id,
-    amount: data.amount,
-    type: data.type,
-    categoryId: data.categoryId || undefined,
-    note: data.note || "",
-    date: data.date,
-  });
-
-  revalidatePath("/dashboard/transactions");
-
-  return {
-    success: true,
-    data: null,
-    message: "Transaction created successfully",
-  };
 }
 
 // fetch transaction by limit

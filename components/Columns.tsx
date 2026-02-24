@@ -3,6 +3,7 @@ import { TransactionPreview } from "@/types/transaction.types";
 import { ColumnDef } from "@tanstack/react-table";
 import SortableHeader from "./SortableHeader";
 import { format } from "date-fns";
+import { formatCurrency } from "@/lib/currency";
 
 export const columns: ColumnDef<TransactionPreview>[] = [
   {
@@ -28,5 +29,8 @@ export const columns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "amount",
     header: () => <SortableHeader label="Amount" columnKey="amount" />,
+    cell: ({ getValue }) => {
+      return formatCurrency(getValue() as number);
+    },
   },
 ];
