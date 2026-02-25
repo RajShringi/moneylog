@@ -26,6 +26,8 @@ const categorySchema = new Schema<ICategoryDocument>(
   { timestamps: true },
 );
 
+categorySchema.index({ userId: 1, name: 1, type: 1 }, { unique: true });
+
 const Category =
   models.Category || model<ICategoryDocument>("Category", categorySchema);
 
