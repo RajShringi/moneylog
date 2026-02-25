@@ -4,9 +4,9 @@ import { z } from "zod";
 export const transactionSchema = z.object({
   amount: z.number().positive("Number should be greater than 0"),
   type: z.enum(TRANSACTION_TYPES),
-  note: z.string().optional(),
+  note: z.string().trim().optional(),
   date: z.date(),
-  categoryId: z.string().optional(),
+  categoryId: z.string(),
 });
 
 export type transactionInput = z.infer<typeof transactionSchema>;

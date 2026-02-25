@@ -6,6 +6,7 @@ export interface ICategory {
   name: string;
   type: TransactionType;
   color?: string;
+  isArchived: boolean;
 }
 
 export interface ICategoryDocument extends Document {
@@ -14,6 +15,7 @@ export interface ICategoryDocument extends Document {
   type: TransactionType;
   userId: Types.ObjectId;
   color?: string;
+  isArchived: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

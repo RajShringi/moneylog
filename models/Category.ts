@@ -22,6 +22,10 @@ const categorySchema = new Schema<ICategoryDocument>(
     color: {
       type: String,
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

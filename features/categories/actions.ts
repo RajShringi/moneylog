@@ -11,36 +11,46 @@ import { revalidatePath } from "next/cache";
 export async function createCategory(
   data: categoryInput,
 ): Promise<ActionResult<null>> {
-  const session = await auth();
-  // if user is not logged in
-  if (!session || !session.user) {
-    return { success: false, error: "user is not logged-in" };
-  }
-  await dbConnect();
-  // validate the data using zod.
-  const validated = categorySchema.safeParse(data);
-  if (!validated.success) {
+  try {
+    const session = await auth();
+    // if user is not logged in
+    if (!session || !session.user) {
+      return { success: false, error: "user is not logged-in" };
+    }
+    await dbConnect();
+    // validate the data using zod.
+    const validated = categorySchema.safeParse(data);
+    if (!validated.success) {
+      return {
+        success: false,
+        error: "invalid data",
+      };
+    }
+
+    // create category
+    await Category.create({
+      name: data.name,
+      type: data.type,
+      userId: session.user.id,
+      color: data.color,
+    });
+
+    revalidatePath("/dashboard/categories");
+
     return {
-      success: false,
-      error: "invalid data",
+      success: true,
+      data: null,
+      message: "Category created successfully",
     };
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      return {
+        success: false,
+        error: "Category with this name already exists",
+      };
+    }
+    return { success: false, error: "Error creating category" };
   }
-
-  // create category
-  await Category.create({
-    name: data.name,
-    type: data.type,
-    userId: session.user.id,
-    color: data.color,
-  });
-
-  revalidatePath("/dashboard/categories");
-
-  return {
-    success: true,
-    data: null,
-    message: "Category created successfully",
-  };
 }
 
 export async function fetchCategories(): Promise<ActionResult<ICategory[]>> {
@@ -51,13 +61,17 @@ export async function fetchCategories(): Promise<ActionResult<ICategory[]>> {
     }
     await dbConnect();
 
-    const categories = await Category.find({ userId: session.user.id }).lean();
+    const categories = await Category.find({
+      userId: session.user.id,
+      isArchived: false,
+    }).lean();
     const serializeCategories = categories.map((doc: any): ICategory => {
       return {
         _id: doc._id.toString(),
         name: doc.name,
         type: doc.type,
         color: doc.color || "#000000",
+        isArchived: doc.isArchived,
       };
     });
     return {

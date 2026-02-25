@@ -21,6 +21,7 @@ const transactionSchema = new Schema<ITransactionDocument>(
     categoryId: {
       type: Schema.Types.ObjectId,
       ref: "Category",
+      default: null,
     },
     note: {
       type: String,
