@@ -4,6 +4,7 @@ import { z } from "zod";
 export const categorySchema = z.object({
   name: z
     .string()
+    .trim()
     .min(3, { message: "Category must be at least 3 characters long" }),
   type: z.enum(TRANSACTION_TYPES),
   color: z.enum(CATEGORY_COLORS.map((color) => color.value)),

@@ -27,7 +27,7 @@ export type TransactionPreview = Pick<
   ITransaction,
   "_id" | "amount" | "note" | "type" | "date"
 > & {
-  category: string;
+  category: { name: string; isArchived: boolean; color: string };
 };
 
 export type TransactionsPageResponse = {

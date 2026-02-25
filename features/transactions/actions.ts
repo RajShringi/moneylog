@@ -140,7 +140,11 @@ export async function fetchTransactions(
         _id: transaction._id.toString(),
         amount: transaction.amount,
         date: transaction.date,
-        category: transaction.category.name,
+        category: {
+          name: transaction.category.name,
+          isArchived: transaction.category.isArchived,
+          color: transaction.category.color,
+        },
         note: transaction.note,
         type: transaction.type,
       }),

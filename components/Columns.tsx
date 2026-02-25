@@ -21,6 +21,14 @@ export const columns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "category",
     header: "Category",
+    cell: ({ getValue }) => {
+      const { name, isArchived, color } = getValue() as {
+        name: string;
+        isArchived: boolean;
+        color: string;
+      };
+      return isArchived ? `${name} archived` : name;
+    },
   },
   {
     accessorKey: "note",
