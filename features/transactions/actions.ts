@@ -46,7 +46,7 @@ export async function createTransaction(
       userId: session.user.id,
       amount,
       type: data.type,
-      categoryId: data.categoryId || undefined,
+      categoryId: data.categoryId || null,
       note: data.note || "",
       date: data.date,
     });
@@ -97,7 +97,10 @@ export async function fetchTransactions(
         },
       },
       {
-        $unwind: "$category",
+        $unwind: {
+          path: "$category",
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $match: {
@@ -132,6 +135,7 @@ export async function fetchTransactions(
     ];
 
     const response = await Transaction.aggregate(pipeline);
+
     const transactions = response[0]?.transactions ?? [];
     const total = response[0]?.total[0]?.count ?? 0;
 
@@ -140,11 +144,11 @@ export async function fetchTransactions(
         _id: transaction._id.toString(),
         amount: transaction.amount,
         date: transaction.date,
-        category: {
+        category: transaction.category ? {
           name: transaction.category.name,
           isArchived: transaction.category.isArchived,
           color: transaction.category.color,
-        },
+        } : null,
         note: transaction.note,
         type: transaction.type,
       }),

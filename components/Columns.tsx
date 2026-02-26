@@ -4,14 +4,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import SortableHeader from "./SortableHeader";
 import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
+import { CATEGORY_COLORS } from "@/constants";
+import { CategoryColorKey } from "@/types/category.types";
 
 export const columns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "date",
     header: () => <SortableHeader label="Date" columnKey="date" />,
-    cell: ({ getValue }) => {
-      const value = getValue() as string | Date;
-      return format(value, "dd MMM, yyyy");
+    cell: ({ row }) => {
+      return format(row.original.date, "dd MMM, yyyy");
     },
   },
   {
@@ -21,13 +22,29 @@ export const columns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "category",
     header: "Category",
-    cell: ({ getValue }) => {
-      const { name, isArchived, color } = getValue() as {
-        name: string;
-        isArchived: boolean;
-        color: string;
-      };
-      return isArchived ? `${name} archived` : name;
+    cell: ({ row }) => {
+      const category = row.original.category;
+      if (!category) {
+        return (
+          <span className="text-xs py-1 px-2 bg-neutral-200 rounded-full font-medium dark:bg-neutral-600">
+            Other
+          </span>
+        );
+      }
+      return category.isArchived ? (
+        <span className="text-neutral-400 text-xs py-1 px-2">
+          {category.name} deleted
+        </span>
+      ) : (
+        <span
+          className="text-xs py-1 px-2 rounded-full font-medium"
+          style={{
+            background: CATEGORY_COLORS[category.color as CategoryColorKey].bg,
+          }}
+        >
+          {category.name}
+        </span>
+      );
     },
   },
   {
@@ -37,8 +54,8 @@ export const columns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "amount",
     header: () => <SortableHeader label="Amount" columnKey="amount" />,
-    cell: ({ getValue }) => {
-      return formatCurrency(getValue() as number);
+    cell: ({ row }) => {
+      return formatCurrency(row.original.amount);
     },
   },
 ];
