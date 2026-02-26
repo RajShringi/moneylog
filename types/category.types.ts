@@ -1,5 +1,6 @@
 import { Document, Types } from "mongoose";
 import { TransactionType } from "./transaction.types";
+import { CATEGORY_COLORS } from "@/constants";
 
 export interface ICategory {
   _id: string;
@@ -19,3 +20,5 @@ export interface ICategoryDocument extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type CategoryColorKey = keyof typeof CATEGORY_COLORS;
