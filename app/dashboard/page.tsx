@@ -1,8 +1,9 @@
+import IncomeExpenseBreakdown from "@/components/charts/incomeExpenseBreakdown";
 import SummaryCard from "@/components/SummaryCard";
 import DatePickerWithRange from "@/components/ui/DatePickerWithRange";
 import { fetchDashboardSummary } from "@/features/transactions/actions";
 import { parseDateRange } from "@/schemas/dateRangeSchema";
-import { PiggyBank, TrendingDown, TrendingUp } from "lucide-react";
+import { Suspense } from "react";
 
 interface DashboardPageProps {
   searchParams: {
@@ -21,11 +22,14 @@ export default async function DashboardPage({
   if (dashboardSummaryResult.success) {
     const { available_balance, income, expense, balance_change } =
       dashboardSummaryResult.data.summary;
+    const { incomeExpenseTrend } = dashboardSummaryResult.data;
 
     return (
       <div className="flex flex-col flex-1 gap-4">
         <div className="flex flex-col gap-2">
-          <DatePickerWithRange from={from} to={to} />
+          <Suspense fallback={<div>Loading search...</div>}>
+            <DatePickerWithRange from={from} to={to} />
+          </Suspense>
 
           <div className="grid grid-cols-4 gap-4">
             <SummaryCard
@@ -47,7 +51,9 @@ export default async function DashboardPage({
             />
           </div>
         </div>
-        <div>Show chart data using range date picker(Top of the page)</div>
+        <div className="grid grid-cols-3 gap-4">
+          <IncomeExpenseBreakdown incomeExpenseTrend={incomeExpenseTrend} />
+        </div>
         <div>Show Transactions table using range date picker</div>
       </div>
     );

@@ -25,11 +25,7 @@ export const columns: ColumnDef<TransactionPreview>[] = [
     cell: ({ row }) => {
       const category = row.original.category;
       if (!category) {
-        return (
-          <span className="text-xs py-1 px-2 bg-neutral-200 rounded-full font-medium dark:bg-neutral-600">
-            Other
-          </span>
-        );
+        return <span className="py-1 px-2 font-medium text-xs">-</span>;
       }
       return category.isArchived ? (
         <span className="text-neutral-400 text-xs py-1 px-2">

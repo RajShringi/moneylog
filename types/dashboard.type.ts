@@ -5,4 +5,11 @@ export type DashboardSummary = {
     expense: number;
     balance_change: number;
   };
+  incomeExpenseTrend: {
+    date: string;
+    income: number;
+    expense: number;
+  }[];
 };
+
+export type DateGroupping = "day" | "month" | "year";

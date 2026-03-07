@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
+import { getDateGranularity } from "@/lib/getDateGranularity";
 import dbConnect from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 import {
@@ -15,7 +16,13 @@ import {
   TransactionPreview,
   TransactionsPageResponse,
 } from "@/types/transaction.types";
-import { endOfDay } from "date-fns";
+import {
+  eachDayOfInterval,
+  eachMonthOfInterval,
+  eachYearOfInterval,
+  endOfDay,
+  format,
+} from "date-fns";
 import mongoose from "mongoose";
 import { PipelineStage } from "mongoose";
 import { revalidatePath } from "next/cache";
@@ -144,11 +151,13 @@ export async function fetchTransactions(
         _id: transaction._id.toString(),
         amount: transaction.amount,
         date: transaction.date,
-        category: transaction.category ? {
-          name: transaction.category.name,
-          isArchived: transaction.category.isArchived,
-          color: transaction.category.color,
-        } : null,
+        category: transaction.category
+          ? {
+              name: transaction.category.name,
+              isArchived: transaction.category.isArchived,
+              color: transaction.category.color,
+            }
+          : null,
         note: transaction.note,
         type: transaction.type,
       }),
@@ -168,7 +177,7 @@ export async function fetchTransactions(
   }
 }
 
-// fetch dashboard summary card info
+// fetch dashboard summary
 export async function fetchDashboardSummary(
   from: Date,
   to: Date,
@@ -178,6 +187,15 @@ export async function fetchDashboardSummary(
     const session = await auth();
     if (!session || !session.user) {
       return { success: false, error: "user is not logged-in" };
+    }
+
+    const granularity = getDateGranularity(from, to);
+    let formatIncomeExpenseTrend = "%Y";
+    if (granularity === "month" || granularity === "day") {
+      formatIncomeExpenseTrend += "-%m";
+    }
+    if (granularity === "day") {
+      formatIncomeExpenseTrend += "-%d";
     }
 
     const pipeline: PipelineStage[] = [
@@ -242,14 +260,78 @@ export async function fetchDashboardSummary(
               },
             },
           ],
+          incomeExpenseTrend: [
+            {
+              $match: {
+                date: { $gte: from, $lte: endOfDay(to) },
+              },
+            },
+            {
+              $group: {
+                _id: {
+                  $dateToString: {
+                    format: formatIncomeExpenseTrend,
+                    date: "$date",
+                  },
+                },
+                income: {
+                  $sum: {
+                    $cond: [{ $eq: ["$type", "income"] }, "$amount", 0],
+                  },
+                },
+                expense: {
+                  $sum: {
+                    $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0],
+                  },
+                },
+              },
+            },
+          ],
         },
       },
     ];
 
     const [result] = await Transaction.aggregate(pipeline);
+    const map = new Map<string, { income: number; expense: number }>();
 
     const overall = result?.overallTotals?.[0];
     const period = result?.periodTotals?.[0];
+    const trend = result?.incomeExpenseTrend;
+
+    trend.forEach((t: any) => {
+      map.set(t._id, { income: t.income, expense: t.expense });
+    });
+
+    let intervals: Date[] = [];
+
+    if (granularity === "year") {
+      intervals = eachYearOfInterval({ start: from, end: to });
+    } else if (granularity === "month") {
+      intervals = eachMonthOfInterval({ start: from, end: to });
+    } else if (granularity === "day") {
+      intervals = eachDayOfInterval({
+        start: from,
+        end: to,
+      });
+    }
+
+    const finalData = intervals.map((date) => {
+      let key: string;
+
+      if (granularity === "day") {
+        key = format(date, "yyyy-MM-dd");
+      } else if (granularity === "month") {
+        key = format(date, "yyyy-MM");
+      } else {
+        key = format(date, "yyyy");
+      }
+
+      return {
+        date: key,
+        income: map.get(key)?.income ?? 0,
+        expense: map.get(key)?.expense ?? 0,
+      };
+    });
 
     const data: DashboardSummary = {
       summary: {
@@ -258,6 +340,7 @@ export async function fetchDashboardSummary(
         expense: period?.expense ?? 0,
         balance_change: period?.balanceChange ?? 0,
       },
+      incomeExpenseTrend: finalData,
     };
 
     return {

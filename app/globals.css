@@ -2,6 +2,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-expense: oklch(70.4% 0.191 22.216);
+  --color-income: oklch(79.2% 0.209 151.711);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
