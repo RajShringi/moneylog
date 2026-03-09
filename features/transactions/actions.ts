@@ -229,7 +229,6 @@ export async function fetchDashboardSummary(
               },
             },
           ],
-
           periodTotals: [
             {
               $match: {
@@ -287,6 +286,42 @@ export async function fetchDashboardSummary(
               },
             },
           ],
+          expensesByCategory: [
+            {
+              $match: {
+                date: { $gte: from, $lte: endOfDay(to) },
+                type: "expense",
+              },
+            },
+            {
+              $group: {
+                _id: "$categoryId",
+                total: { $sum: "$amount" },
+              },
+            },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "_id",
+                foreignField: "_id",
+                pipeline: [{ $match: { isArchived: false } }],
+                as: "category",
+              },
+            },
+            {
+              $unwind: {
+                path: "$category",
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                total: 1,
+                name: "$category.name",
+                color: "$category.color",
+              },
+            },
+          ],
         },
       },
     ];
@@ -297,6 +332,8 @@ export async function fetchDashboardSummary(
     const overall = result?.overallTotals?.[0];
     const period = result?.periodTotals?.[0];
     const trend = result?.incomeExpenseTrend;
+    const breakdown = result?.expensesByCategory;
+    console.log(breakdown);
 
     trend.forEach((t: any) => {
       map.set(t._id, { income: t.income, expense: t.expense });
