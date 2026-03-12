@@ -30,7 +30,13 @@ const categorySchema = new Schema<ICategoryDocument>(
   { timestamps: true },
 );
 
-categorySchema.index({ userId: 1, name: 1, type: 1 }, { unique: true });
+categorySchema.index(
+  { userId: 1, name: 1, type: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { isArchived: false },
+  },
+);
 
 const Category =
   models.Category || model<ICategoryDocument>("Category", categorySchema);
