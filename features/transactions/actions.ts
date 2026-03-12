@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
-import { getDateGranularity } from "@/lib/getDateGranularity";
+import { getDateGranularity } from "@/lib/date";
 import dbConnect from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 import {
@@ -229,7 +229,6 @@ export async function fetchDashboardSummary(
               },
             },
           ],
-
           periodTotals: [
             {
               $match: {
@@ -287,6 +286,48 @@ export async function fetchDashboardSummary(
               },
             },
           ],
+          ExpenseBreakdownByCategory: [
+            {
+              $match: {
+                date: { $gte: from, $lte: endOfDay(to) },
+                type: "expense",
+              },
+            },
+            {
+              $limit: 5,
+            },
+            {
+              $group: {
+                _id: "$categoryId",
+                total: { $sum: "$amount" },
+              },
+            },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "_id",
+                foreignField: "_id",
+                pipeline: [{ $match: { isArchived: false } }],
+                as: "category",
+              },
+            },
+            {
+              $unwind: {
+                path: "$category",
+              },
+            },
+            {
+              $sort: { total: -1 },
+            },
+            {
+              $project: {
+                _id: 0,
+                total: 1,
+                color: "$category.color",
+                name: "$category.name",
+              },
+            },
+          ],
         },
       },
     ];
@@ -297,6 +338,7 @@ export async function fetchDashboardSummary(
     const overall = result?.overallTotals?.[0];
     const period = result?.periodTotals?.[0];
     const trend = result?.incomeExpenseTrend;
+    const breakdown = result?.ExpenseBreakdownByCategory;
 
     trend.forEach((t: any) => {
       map.set(t._id, { income: t.income, expense: t.expense });
@@ -341,6 +383,7 @@ export async function fetchDashboardSummary(
         balance_change: period?.balanceChange ?? 0,
       },
       incomeExpenseTrend: finalData,
+      expenseBreakdownByCategory: breakdown,
     };
 
     return {

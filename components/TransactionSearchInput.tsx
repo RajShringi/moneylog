@@ -20,7 +20,7 @@ export default function TransactionSearchInput() {
   const debounceSearch = useDebounce(search);
 
   useEffect(() => {
-    if(isFirstRender.current){
+    if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
