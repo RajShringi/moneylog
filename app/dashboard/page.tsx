@@ -1,4 +1,5 @@
-import IncomeExpenseBreakdown from "@/components/charts/incomeExpenseBreakdown";
+import { ExpenseBreakdownByCategory } from "@/components/charts/ExpenseBreakdownByCategory";
+import IncomeExpenseTrend from "@/components/charts/IncomeExpenseTrend";
 import SummaryCard from "@/components/SummaryCard";
 import DatePickerWithRange from "@/components/ui/DatePickerWithRange";
 import { fetchDashboardSummary } from "@/features/transactions/actions";
@@ -20,9 +21,8 @@ export default async function DashboardPage({
   const dashboardSummaryResult = await fetchDashboardSummary(from, to);
 
   if (dashboardSummaryResult.success) {
-    const { available_balance, income, expense, balance_change } =
-      dashboardSummaryResult.data.summary;
-    const { incomeExpenseTrend } = dashboardSummaryResult.data;
+    const { incomeExpenseTrend, expenseBreakdownByCategory, summary } =
+      dashboardSummaryResult.data;
 
     return (
       <div className="flex flex-col flex-1 gap-4">
@@ -33,18 +33,23 @@ export default async function DashboardPage({
 
           <div className="grid grid-cols-4 gap-4">
             <SummaryCard
-              amount={available_balance}
+              amount={summary.available_balance}
               heading="Availabe balance"
             />
-            <SummaryCard amount={income} heading="Income" from={from} to={to} />
             <SummaryCard
-              amount={expense}
+              amount={summary.income}
+              heading="Income"
+              from={from}
+              to={to}
+            />
+            <SummaryCard
+              amount={summary.expense}
               heading="Expense"
               from={from}
               to={to}
             />
             <SummaryCard
-              amount={balance_change}
+              amount={summary.balance_change}
               heading="Balance change"
               from={from}
               to={to}
@@ -52,7 +57,11 @@ export default async function DashboardPage({
           </div>
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <IncomeExpenseBreakdown incomeExpenseTrend={incomeExpenseTrend} />
+          <IncomeExpenseTrend incomeExpenseTrend={incomeExpenseTrend} />
+          <ExpenseBreakdownByCategory
+            expenseBreakdownByCategory={expenseBreakdownByCategory}
+            expense={summary.expense}
+          />
         </div>
         <div>Show Transactions table using range date picker</div>
       </div>

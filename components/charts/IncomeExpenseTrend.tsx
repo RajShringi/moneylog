@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import IncomeExpenseTrendTooltip from "./Tooltip/IncomeExpenseTrendTooltip";
 
 interface IncomeExpenseTrendProps {
   incomeExpenseTrend: {
@@ -25,7 +26,8 @@ interface IncomeExpenseTrendProps {
     expense: number;
   }[];
 }
-export default function incomeExpenseBreakdown({
+
+export default function IncomeExpenseTrend({
   incomeExpenseTrend,
 }: IncomeExpenseTrendProps) {
   return (
@@ -70,6 +72,13 @@ export default function incomeExpenseBreakdown({
             <CartesianGrid vertical={false} strokeDasharray={"4"} />
             <XAxis
               dataKey="date"
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              tickMargin={10}
+              angle={-45}
+              axisLine={false}
+              textAnchor="end"
+              height={60}
               tickFormatter={(value) => {
                 if (value.length === 7) {
                   const date = parse(value, "yyyy-MM", new Date());
@@ -81,11 +90,15 @@ export default function incomeExpenseBreakdown({
               }}
             />
             <YAxis
+              tick={{ fontSize: 12 }}
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
               tickFormatter={(value) => {
                 return formatCompactCurrency(value);
               }}
             />
-            <Tooltip formatter={(value: number) => formatCurrency(value)} />
+            <Tooltip cursor={false} content={<IncomeExpenseTrendTooltip />} />
 
             <Area
               dataKey="expense"
