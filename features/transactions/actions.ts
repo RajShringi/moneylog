@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
-import { getDateGranularity } from "@/lib/getDateGranularity";
+import { getDateGranularity } from "@/lib/date";
 import dbConnect from "@/lib/mongodb";
 import Transaction from "@/models/Transaction";
 import {

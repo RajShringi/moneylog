@@ -10,6 +10,11 @@ export type DashboardSummary = {
     income: number;
     expense: number;
   }[];
+  expenseBreakdownByCategory: {
+    total: number;
+    name: string;
+    color: string;
+  }[];
 };
 
 export type DateGroupping = "day" | "month" | "year";
