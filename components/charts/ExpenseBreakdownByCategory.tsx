@@ -6,6 +6,8 @@ import {
   CartesianGrid,
   Cell,
   LabelList,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -17,32 +19,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
-import { formatCurrency } from "@/lib/currency";
+
 import { useMemo } from "react";
 import { CATEGORY_COLORS } from "@/constants";
 import { CategoryColorKey } from "@/types/category.types";
-
-export const description = "A bar chart with a custom label";
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--chart-2)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
-  },
-  label: {
-    color: "var(--background)",
-  },
-} satisfies ChartConfig;
+import ExpenseBreakdownByCategoryToolTip from "./Tooltip/ExpenseBreakdownByCategoryToolTip";
 
 interface ExpenseBreakdownByCategoryProps {
   expenseBreakdownByCategory: {
@@ -60,8 +41,11 @@ export function ExpenseBreakdownByCategory({
   const chartData = useMemo(
     () =>
       expenseBreakdownByCategory.map((breakdown) => {
+        const fill = CATEGORY_COLORS[breakdown.color as CategoryColorKey].bg;
+
         return {
           ...breakdown,
+          fill,
           percentage: `${((breakdown.total / expense) * 100).toFixed(2)}%`,
         };
       }),
@@ -77,15 +61,12 @@ export function ExpenseBreakdownByCategory({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer className="min-h-75 w-full" config={chartConfig}>
+        <ResponsiveContainer width={"100%"} height={300}>
           <BarChart
             accessibilityLayer
             data={chartData}
             layout="vertical"
-            margin={{
-              right: 50,
-              left: 10,
-            }}
+            margin={{ left: 10, right: 50 }}
           >
             <CartesianGrid horizontal={false} strokeDasharray={"4"} />
             <YAxis
@@ -94,33 +75,21 @@ export function ExpenseBreakdownByCategory({
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value}
-              // hide
-            />
-            <XAxis dataKey="total" type="number" hide />
-            <ChartTooltip
-              cursor={false}
-              content={
-                <ChartTooltipContent
-                  indicator="dot"
-                  formatter={(value) => [formatCurrency(Number(value))]}
-                />
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value) =>
+                value.length > 12 ? value.slice(0, 12) + "…" : value
               }
             />
+            <XAxis dataKey="total" type="number" hide />
+            <Tooltip
+              cursor={false}
+              content={<ExpenseBreakdownByCategoryToolTip />}
+            />
 
-            <Bar
-              dataKey="total"
-              layout="vertical"
-              fill="var(--color-expense)"
-              radius={4}
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={index}
-                  fill={CATEGORY_COLORS[entry.color as CategoryColorKey].bg}
-                />
+            <Bar dataKey="total" layout="vertical" radius={4}>
+              {chartData.map((entry) => (
+                <Cell key={entry.name} fill={entry.fill} />
               ))}
-
               <LabelList
                 dataKey="percentage"
                 position="right"
@@ -129,7 +98,7 @@ export function ExpenseBreakdownByCategory({
               />
             </Bar>
           </BarChart>
-        </ChartContainer>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
