@@ -76,10 +76,10 @@ export async function createTransaction(
 
 // fetch transaction by limit
 export async function fetchTransactions(
-  page: number,
-  search: string,
-  sortBy: SortBy,
-  sortOrder: SortOrder,
+  page: number = 1,
+  search: string = "",
+  sortBy: SortBy = "date",
+  sortOrder: SortOrder = "desc",
 ): Promise<ActionResult<TransactionsPageResponse>> {
   try {
     const session = await auth();

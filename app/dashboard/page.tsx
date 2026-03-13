@@ -1,8 +1,13 @@
 import { ExpenseBreakdownByCategory } from "@/components/charts/ExpenseBreakdownByCategory";
 import IncomeExpenseTrend from "@/components/charts/IncomeExpenseTrend";
+import { columns } from "@/components/Columns";
+import DataTable from "@/components/DataTable";
 import SummaryCard from "@/components/SummaryCard";
 import DatePickerWithRange from "@/components/ui/DatePickerWithRange";
-import { fetchDashboardSummary } from "@/features/transactions/actions";
+import {
+  fetchDashboardSummary,
+  fetchTransactions,
+} from "@/features/transactions/actions";
 import { parseDateRange } from "@/schemas/dateRangeSchema";
 import { Suspense } from "react";
 
@@ -18,9 +23,12 @@ export default async function DashboardPage({
   const params = await searchParams;
   const { from, to } = parseDateRange({ from: params.from, to: params.to });
 
-  const dashboardSummaryResult = await fetchDashboardSummary(from, to);
+  const [dashboardSummaryResult, transactionsResult] = await Promise.all([
+    fetchDashboardSummary(from, to),
+    fetchTransactions(),
+  ]);
 
-  if (dashboardSummaryResult.success) {
+  if (dashboardSummaryResult.success && transactionsResult.success) {
     const { incomeExpenseTrend, expenseBreakdownByCategory, summary } =
       dashboardSummaryResult.data;
 
@@ -63,7 +71,12 @@ export default async function DashboardPage({
             expense={summary.expense}
           />
         </div>
-        <div>Show Transactions table using range date picker</div>
+        <Suspense>
+          <DataTable
+            columns={columns}
+            data={transactionsResult.data.transactions}
+          />
+        </Suspense>
       </div>
     );
   }
