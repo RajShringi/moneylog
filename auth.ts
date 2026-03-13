@@ -14,7 +14,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        console.log("Authorizing user with credentials:", credentials);
         await dbConnect();
         if (!credentials || !credentials.email || !credentials.password) {
           return null;
@@ -35,7 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.password,
         );
 
         if (!isPasswordValid) {
