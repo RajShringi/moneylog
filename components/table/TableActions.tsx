@@ -8,12 +8,14 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 interface TableActions {
   id: string;
 }
 
 export default function TableActions({ id }: TableActions) {
+  const router = useRouter();
   return (
     <div>
       <DropdownMenu>
@@ -25,12 +27,11 @@ export default function TableActions({ id }: TableActions) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          {/* <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(payment.id)}
+          <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/transactions/${id}/edit`)}
           >
-            Copy payment ID
-          </DropdownMenuItem> */}
-          <DropdownMenuItem>Edit</DropdownMenuItem>
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuItem>Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
