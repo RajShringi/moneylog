@@ -60,7 +60,11 @@ export default async function TransactionsPage({
           </Suspense>
         </div>
         <div className="my-4">
-          <ManageTransactionForm allCategories={categoriesResult.data} />
+          <ManageTransactionForm
+            allCategories={categoriesResult.data}
+            transaction={null}
+            mode="create"
+          />
         </div>
       </div>
     );
