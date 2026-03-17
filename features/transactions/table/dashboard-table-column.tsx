@@ -1,13 +1,13 @@
 "use client";
 import { TransactionPreview } from "@/types/transaction.types";
 import { ColumnDef } from "@tanstack/react-table";
-import SortableHeader from "./SortableHeader";
 import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { CATEGORY_COLORS } from "@/constants";
 import { CategoryColorKey } from "@/types/category.types";
+import SortableHeader from "@/components/table/SortableHeader";
 
-export const columns: ColumnDef<TransactionPreview>[] = [
+export const dashboardColumns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "date",
     header: () => <SortableHeader label="Date" columnKey="date" />,

@@ -1,7 +1,6 @@
 import { ExpenseBreakdownByCategory } from "@/components/charts/ExpenseBreakdownByCategory";
 import IncomeExpenseTrend from "@/components/charts/IncomeExpenseTrend";
-import { columns } from "@/components/Columns";
-import DataTable from "@/components/DataTable";
+import DataTable from "@/components/table/DataTable";
 import SummaryCard from "@/components/SummaryCard";
 import DatePickerWithRange from "@/components/ui/DatePickerWithRange";
 import {
@@ -10,11 +9,12 @@ import {
 } from "@/features/transactions/actions";
 import { parseDateRange } from "@/schemas/dateRangeSchema";
 import { Suspense } from "react";
+import { dashboardColumns } from "@/features/transactions/table/dashboard-table-column";
 
 interface DashboardPageProps {
-  searchParams: {
+  searchParams: Promise<{
     [key: string]: string | undefined;
-  };
+  }>;
 }
 
 export default async function DashboardPage({
@@ -73,7 +73,7 @@ export default async function DashboardPage({
         </div>
         <Suspense>
           <DataTable
-            columns={columns}
+            columns={dashboardColumns}
             data={transactionsResult.data.transactions}
           />
         </Suspense>

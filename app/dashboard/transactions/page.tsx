@@ -1,11 +1,11 @@
-import { columns } from "@/components/Columns";
-import DataTable from "@/components/DataTable";
+import DataTable from "@/components/table/DataTable";
 import ManageTransactionForm from "@/components/ManageTransactionForm";
 import TransactionSearchInput from "@/components/TransactionSearchInput";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { transactionsColumns } from "@/features/transactions/table/transactions-table-column";
 
 interface TransactionsPageProps {
   searchParams: {
@@ -50,7 +50,7 @@ export default async function TransactionsPage({
           </Suspense>
           <Suspense fallback={<div>Loading table...</div>}>
             <DataTable
-              columns={columns}
+              columns={transactionsColumns}
               data={transactionsResult.data.transactions}
               pagination={{
                 currentPage,
@@ -60,7 +60,11 @@ export default async function TransactionsPage({
           </Suspense>
         </div>
         <div className="my-4">
-          <ManageTransactionForm allCategories={categoriesResult.data} />
+          <ManageTransactionForm
+            allCategories={categoriesResult.data}
+            transaction={null}
+            mode="create"
+          />
         </div>
       </div>
     );

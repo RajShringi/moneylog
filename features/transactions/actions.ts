@@ -13,6 +13,8 @@ import { ActionResult } from "@/types/action.type";
 import { DashboardSummary } from "@/types/dashboard.type";
 import { SortBy, SortOrder } from "@/types/pagination.types";
 import {
+  ITransaction,
+  ITransactionDocument,
   TransactionPreview,
   TransactionsPageResponse,
 } from "@/types/transaction.types";
@@ -47,8 +49,7 @@ export async function createTransaction(
         error: "Invalid data",
       };
     }
-
-    const amount = Math.round(data.amount * 100);
+    const amount = Math.round(Number(data.amount) * 100);
     const transaction = new Transaction({
       userId: session.user.id,
       amount,
@@ -74,7 +75,45 @@ export async function createTransaction(
   }
 }
 
-// fetch transaction by limit
+// edit Transaction
+export async function editTransaction(
+  transactionId: string,
+  data: transactionInput,
+): Promise<ActionResult<null>> {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "User is not logged-in" };
+    }
+
+    const validated = transactionSchema.safeParse(data);
+    if (!validated.success) {
+      return { success: false, error: "Invalid data" };
+    }
+
+    // update transaction
+    const amount = Math.round(Number(data.amount) * 100);
+    const transaction = {
+      ...data,
+      amount,
+      categoryId: data.categoryId || null,
+    };
+    await Transaction.findByIdAndUpdate(transactionId, transaction);
+    return {
+      success: true,
+      data: null,
+      message: "Transaction updated successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Error editing transaction",
+    };
+  }
+}
+
+// fetch transactions by limit
 export async function fetchTransactions(
   page: number = 1,
   search: string = "",
@@ -173,6 +212,48 @@ export async function fetchTransactions(
       success: false,
       error:
         error instanceof Error ? error.message : "Transactions fetch failed",
+    };
+  }
+}
+
+export async function fetchTransactionById({
+  id,
+}: {
+  id: string;
+}): Promise<ActionResult<ITransaction>> {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "User is not logged-in" };
+    }
+    await dbConnect();
+    const transaction =
+      await Transaction.findById(id).lean<ITransactionDocument>();
+    if (!transaction) {
+      return {
+        success: false,
+        error: "Transaction not found",
+      };
+    }
+
+    const serializeTransaction: ITransaction = {
+      _id: transaction._id.toString(),
+      amount: transaction.amount,
+      date: transaction.date,
+      note: transaction.note || "",
+      type: transaction.type,
+      categoryId: transaction.categoryId?.toString(),
+    };
+    return {
+      success: true,
+      data: serializeTransaction,
+      message: "Transaction fetched successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Transaction fetch failed",
     };
   }
 }

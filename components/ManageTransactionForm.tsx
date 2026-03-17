@@ -35,37 +35,56 @@ import {
   transactionSchema,
 } from "@/schemas/transactionsSchema";
 import { ICategory } from "@/types/category.types";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { InputGroup, InputGroupTextarea } from "./ui/input-group";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
 import { format } from "date-fns";
 import { TRANSACTION_TYPES } from "@/constants";
-import { createTransaction } from "@/features/transactions/actions";
-
-const formSchema = transactionSchema;
+import {
+  createTransaction,
+  editTransaction,
+} from "@/features/transactions/actions";
+import { ITransaction } from "@/types/transaction.types";
+import { useRouter } from "next/navigation";
 
 interface ManageTransactionFormProps {
   allCategories: ICategory[];
+  mode: "create" | "edit";
+  transaction: ITransaction | null;
 }
 
 export default function ManageTransactionForm({
   allCategories,
+  transaction,
+  mode,
 }: ManageTransactionFormProps) {
   const form = useForm<transactionInput>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      amount: undefined,
-      note: "",
-      type: "income",
-      categoryId: "",
-      date: new Date(),
-    },
+    resolver: zodResolver(transactionSchema),
+    defaultValues:
+      mode === "edit" && transaction
+        ? {
+            amount: `${transaction.amount / 100}`,
+            note: transaction.note || "",
+            type: transaction.type,
+            categoryId: transaction.categoryId || "",
+            date: transaction.date,
+          }
+        : {
+            amount: "",
+            note: "",
+            type: "income",
+            categoryId: "69a851afc9fce1af13876a85",
+            date: new Date(),
+          },
   });
+
+  const router = useRouter();
 
   // Watch the type field to filter categories
   const selectedType = form.watch("type");
+  const prevTypeRef = useRef(selectedType);
 
   // Filter categories based on selected type
   const filteredCategories = allCategories.filter(
@@ -74,10 +93,13 @@ export default function ManageTransactionForm({
 
   // Reset categoryId when type changes
   useEffect(() => {
-    form.setValue("categoryId", "");
+    if (prevTypeRef.current !== selectedType) {
+      prevTypeRef.current = selectedType;
+      form.setValue("categoryId", "");
+    }
   }, [selectedType, form]);
 
-  async function onSubmit(data: transactionInput) {
+  async function handleCreateTransaction(data: transactionInput) {
     try {
       const response = await createTransaction(data);
       if (response.success) {
@@ -93,12 +115,45 @@ export default function ManageTransactionForm({
     }
   }
 
+  async function handleEditTransaction(data: transactionInput) {
+    try {
+      if (!transaction?._id) return;
+      const response = await editTransaction(transaction._id, data);
+
+      if (response.success) {
+        toast.success("Transaction edited successfully");
+        form.reset();
+        router.push("/dashboard/transactions"); // Navigate to transaction page
+      } else {
+        toast.error(response.error);
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Error editing transaction",
+      );
+    }
+  }
+
+  async function onSubmit(data: transactionInput) {
+    if (mode === "create") {
+      await handleCreateTransaction(data);
+    } else {
+      await handleEditTransaction(data);
+    }
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen">
       <Card className="w-full sm:max-w-md">
         <CardHeader>
-          <CardTitle>Add Transaction</CardTitle>
-          <CardDescription>Create a new transaction</CardDescription>
+          <CardTitle>
+            {mode === "create" ? "Add Transaction" : "Edit Transaction"}
+          </CardTitle>
+          <CardDescription>
+            {mode === "create"
+              ? "Create a new transaction"
+              : "Edit your transaction"}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form id="transaction-form" onSubmit={form.handleSubmit(onSubmit)}>
@@ -116,15 +171,6 @@ export default function ManageTransactionForm({
                       aria-invalid={fieldState.invalid}
                       placeholder="please enter the amount"
                       autoComplete="off"
-                      value={
-                        field.value === undefined || Number.isNaN(field.value)
-                          ? ""
-                          : field.value
-                      }
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        field.onChange(v === "" ? undefined : Number(v));
-                      }}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
