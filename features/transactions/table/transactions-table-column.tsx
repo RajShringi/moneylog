@@ -59,7 +59,7 @@ export const transactionsColumns: ColumnDef<TransactionPreview>[] = [
     id: "actions",
     accessorKey: "Actions",
     cell: ({ row }) => {
-      return <TableActions id={row.id} />;
+      return <TableActions id={row.original._id} />;
     },
   },
 ];
