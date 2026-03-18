@@ -91,14 +91,26 @@ export async function editTransaction(
       return { success: false, error: "Invalid data" };
     }
 
-    // update transaction
-    const amount = Math.round(Number(data.amount) * 100);
-    const transaction = {
-      ...data,
-      amount,
-      categoryId: data.categoryId || null,
-    };
-    await Transaction.findByIdAndUpdate(transactionId, transaction);
+    const transaction = await Transaction.findById(transactionId);
+
+    if (!transaction) {
+      return { success: false, error: "Transaction not found" };
+    }
+
+    // Authorization check
+    if (transaction.userId.toString() !== session.user.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const amount = Math.round(Number(validated.data.amount) * 100);
+    transaction.categoryId = validated.data.categoryId || null;
+    transaction.amount = amount;
+    transaction.note = validated.data.note || "";
+    transaction.date = validated.data.date;
+    transaction.type = validated.data.type;
+    await transaction.save();
+    revalidatePath("/dashboard/transactions");
+
     return {
       success: true,
       data: null,
