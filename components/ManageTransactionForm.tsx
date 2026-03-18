@@ -122,7 +122,6 @@ export default function ManageTransactionForm({
 
       if (response.success) {
         toast.success("Transaction edited successfully");
-        form.reset();
         router.push("/dashboard/transactions"); // Navigate to transaction page
       } else {
         toast.error(response.error);
