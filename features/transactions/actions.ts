@@ -502,6 +502,7 @@ export async function deleteTransaction(
       return { success: false, error: "Unauthorized" };
     }
     await transaction.deleteOne();
+    revalidatePath("/dashboard/transactions");
     return {
       success: true,
       data: null,
