@@ -216,6 +216,7 @@ export async function fetchTransactions(
   }
 }
 
+// fetch single transaction
 export async function fetchTransactionById({
   id,
 }: {
@@ -479,6 +480,38 @@ export async function fetchDashboardSummary(
         error instanceof Error
           ? error.message
           : "Dashboard summary fetch failed",
+    };
+  }
+}
+
+// delete transaction
+export async function deleteTransaction(
+  id: string,
+): Promise<ActionResult<null>> {
+  try {
+    await dbConnect();
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "user is not logged-in" };
+    }
+    const transaction = await Transaction.findById(id);
+    if (!transaction) {
+      return { success: false, error: "Transaction not found" };
+    }
+    if (transaction.userId.toString() !== session.user.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+    await transaction.deleteOne();
+    return {
+      success: true,
+      data: null,
+      message: "Transaction deleted successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Transaction delete failed",
     };
   }
 }
