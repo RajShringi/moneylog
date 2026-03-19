@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import Category from "@/models/Category";
 import { categoryInput, categorySchema } from "@/schemas/categorySchema";
 import { ActionResult } from "@/types/action.type";
-import { ICategory } from "@/types/category.types";
+import { ICategory, ICategoryDocument } from "@/types/category.types";
 import { revalidatePath } from "next/cache";
 
 export async function createCategory(
@@ -83,6 +83,44 @@ export async function fetchCategories(): Promise<ActionResult<ICategory[]>> {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Can't fetch categories",
+    };
+  }
+}
+
+export async function fetchCategoryById(
+  id: string,
+): Promise<ActionResult<ICategory>> {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "user is not logged-in" };
+    }
+    await dbConnect();
+
+    const category = await Category.findOne({
+      _id: id,
+      userId: session.user.id,
+      isArchived: false,
+    }).lean<ICategoryDocument>();
+    if (!category) {
+      return { success: false, error: "Category not found" };
+    }
+    const serializeCategory: ICategory = {
+      _id: category._id.toString(),
+      name: category.name,
+      type: category.type,
+      color: category.color || "#000000",
+      isArchived: category.isArchived,
+    };
+    return {
+      success: true,
+      data: serializeCategory,
+      message: "Category fetched successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Can't fetch category",
     };
   }
 }
