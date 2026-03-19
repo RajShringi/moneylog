@@ -35,24 +35,41 @@ import {
 } from "./ui/select";
 
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { createCategory } from "@/features/categories/actions";
+import { createCategory, editCategory } from "@/features/categories/actions";
 import { CATEGORY_COLORS, TRANSACTION_TYPES } from "@/constants";
-import { CategoryColorKey } from "@/types/category.types";
+import { CategoryColorKey, ICategory } from "@/types/category.types";
+import { useRouter } from "next/navigation";
 
 const formSchema = categorySchema;
 const defaultColor = Object.keys(CATEGORY_COLORS)[0] as CategoryColorKey;
 
-export default function ManageCategoryForm() {
+interface ManageCategoryFormProps {
+  mode: "create" | "edit";
+  category?: ICategory;
+}
+
+export default function ManageCategoryForm({
+  mode,
+  category,
+}: ManageCategoryFormProps) {
   const form = useForm<categoryInput>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      type: "income",
-      color: defaultColor,
-    },
+    defaultValues:
+      mode === "edit" && category
+        ? {
+            name: category.name,
+            type: category.type,
+            color: category.color as CategoryColorKey,
+          }
+        : {
+            name: "",
+            type: "income",
+            color: defaultColor,
+          },
   });
+  const router = useRouter();
 
-  async function onSubmit(data: categoryInput) {
+  async function handleCreateCategory(data: categoryInput) {
     try {
       const response = await createCategory(data);
       if (response.success) {
@@ -68,12 +85,44 @@ export default function ManageCategoryForm() {
     }
   }
 
+  async function handleEditCategory(data: categoryInput) {
+    try {
+      if (!category) {
+        toast.error("Category not found");
+        return;
+      }
+      const response = await editCategory(category._id, data);
+      if (response.success) {
+        toast.success("Category updated successfully");
+        router.push("/dashboard/categories");
+      } else {
+        toast.error(response.error);
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Error updating transaction",
+      );
+    }
+  }
+
+  async function onSubmit(data: categoryInput) {
+    if (mode === "create") {
+      handleCreateCategory(data);
+    } else {
+      handleEditCategory(data);
+    }
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen">
       <Card className="w-full sm:max-w-md">
         <CardHeader>
-          <CardTitle>Add Category</CardTitle>
-          <CardDescription>Create a new category</CardDescription>
+          <CardTitle>
+            {mode === "create" ? "Add Category" : "Edit Category"}
+          </CardTitle>
+          <CardDescription>
+            {mode === "create" ? "Create a new category" : "Edit your category"}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form id="category-form" onSubmit={form.handleSubmit(onSubmit)}>

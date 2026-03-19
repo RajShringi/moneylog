@@ -1,4 +1,4 @@
-import CategorySection from "@/components/CategorySection";
+import CategoryCard from "@/components/CategoryCard";
 import ManageCategoryForm from "@/components/ManageCategoryForm";
 import { fetchCategories } from "@/features/categories/actions";
 
@@ -14,9 +14,9 @@ export default async function CategoriesPage() {
   if (res.success) {
     return (
       <div className="flex flex-col gap-4">
-        <CategorySection title="Income" categories={income} />
-        <CategorySection title="Expense" categories={expense} />
-        <ManageCategoryForm />
+        <CategoryCard title="Income" categories={income} />
+        <CategoryCard title="Expense" categories={expense} />
+        <ManageCategoryForm mode="create" />
       </div>
     );
   }
