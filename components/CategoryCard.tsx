@@ -29,7 +29,7 @@ export default function CategoryCard({
               }}
             >
               <div className="flex items-center gap-1">
-                <div>{cat.name}</div>
+                <div className="capitalize">{cat.name}</div>
               </div>
               <CategoryCardActions id={cat._id} />
             </div>

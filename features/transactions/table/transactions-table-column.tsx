@@ -30,11 +30,11 @@ export const transactionsColumns: ColumnDef<TransactionPreview>[] = [
       }
       return category.isArchived ? (
         <span className="text-neutral-400 text-xs py-1 px-2">
-          {category.name} deleted
+          <span className="capitalize">{category.name}</span> deleted
         </span>
       ) : (
         <span
-          className="text-xs py-1 px-2 rounded-full font-medium"
+          className="text-xs py-1 px-2 rounded-full font-medium capitalize"
           style={{
             background: CATEGORY_COLORS[category.color as CategoryColorKey].bg,
           }}

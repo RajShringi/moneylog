@@ -29,7 +29,7 @@ export async function createCategory(
 
     // create category
     await Category.create({
-      name: data.name,
+      name: data.name.trim(),
       type: data.type,
       userId: session.user.id,
       color: data.color,
