@@ -1,14 +1,13 @@
 import { CATEGORY_COLORS } from "@/constants";
 import { CategoryColorKey, ICategory } from "@/types/category.types";
-import { Button } from "./ui/button";
-import { EllipsisVertical } from "lucide-react";
+import CategoryCardActions from "./CategoryCardActions";
 
 interface CategorySectionProps {
   title: string;
   categories: ICategory[];
 }
 
-export default function CategorySection({
+export default function CategoryCard({
   title,
   categories,
 }: CategorySectionProps) {
@@ -32,9 +31,7 @@ export default function CategorySection({
               <div className="flex items-center gap-1">
                 <div>{cat.name}</div>
               </div>
-              <Button variant={"ghost"}>
-                <EllipsisVertical />
-              </Button>
+              <CategoryCardActions id={cat._id} />
             </div>
           ))}
         </div>
