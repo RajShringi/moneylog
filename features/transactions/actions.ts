@@ -388,31 +388,23 @@ export async function fetchDashboardSummary(
               },
             },
             {
-              $limit: 5,
-            },
-            {
               $group: {
                 _id: "$categoryId",
                 total: { $sum: "$amount" },
               },
             },
+            { $sort: { total: -1 } },
+            { $limit: 5 },
             {
               $lookup: {
                 from: "categories",
                 localField: "_id",
                 foreignField: "_id",
-                pipeline: [{ $match: { isArchived: false } }],
+                pipeline: [{ $match: { isArchived: false, type: "expense" } }],
                 as: "category",
               },
             },
-            {
-              $unwind: {
-                path: "$category",
-              },
-            },
-            {
-              $sort: { total: -1 },
-            },
+            { $unwind: "$category" },
             {
               $project: {
                 _id: 0,
