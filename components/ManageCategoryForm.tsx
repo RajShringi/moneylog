@@ -203,49 +203,50 @@ export default function ManageCategoryForm({
               </div>
 
               {/* type */}
-              <Controller
-                name="type"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <FieldSet>
-                    <FieldLabel>Type</FieldLabel>
-                    <FieldDescription>
-                      Select transaction type Income | Expense
-                    </FieldDescription>
-                    <RadioGroup
-                      name={field.name}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="flex gap-4"
-                    >
-                      {TRANSACTION_TYPES.map((type) => (
-                        <FieldLabel
-                          key={type}
-                          htmlFor={`form-rhf-radiogroup-${type}`}
-                        >
-                          <Field
-                            orientation="horizontal"
-                            data-invalid={fieldState.invalid}
+              {mode === "create" && (
+                <Controller
+                  name="type"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <FieldSet>
+                      <FieldLabel>Type</FieldLabel>
+                      <FieldDescription>
+                        Select transaction type Income | Expense
+                      </FieldDescription>
+                      <RadioGroup
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        className="flex gap-4"
+                      >
+                        {TRANSACTION_TYPES.map((type) => (
+                          <FieldLabel
+                            key={type}
+                            htmlFor={`form-rhf-radiogroup-${type}`}
                           >
-                            <FieldContent>
-                              <FieldTitle>{type}</FieldTitle>
-                            </FieldContent>
-                            <RadioGroupItem
-                              value={type}
-                              id={`form-rhf-radiogroup-${type}`}
-                              aria-invalid={fieldState.invalid}
-                            />
-                          </Field>
-                        </FieldLabel>
-                      ))}
-                    </RadioGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </FieldSet>
-                )}
-              />
-              {/* Color */}
+                            <Field
+                              orientation="horizontal"
+                              data-invalid={fieldState.invalid}
+                            >
+                              <FieldContent>
+                                <FieldTitle>{type}</FieldTitle>
+                              </FieldContent>
+                              <RadioGroupItem
+                                value={type}
+                                id={`form-rhf-radiogroup-${type}`}
+                                aria-invalid={fieldState.invalid}
+                              />
+                            </Field>
+                          </FieldLabel>
+                        ))}
+                      </RadioGroup>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </FieldSet>
+                  )}
+                />
+              )}
             </FieldGroup>
           </form>
         </CardContent>
