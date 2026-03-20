@@ -172,3 +172,38 @@ export async function editCategory(
     };
   }
 }
+
+export async function archivedCategory(
+  id: string,
+): Promise<ActionResult<null>> {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return { success: false, error: "user is not logged-in" };
+    }
+    await dbConnect();
+    const category = await Category.findOneAndUpdate(
+      {
+        _id: id,
+        userId: session.user.id,
+        isArchived: false,
+      },
+      { $set: { isArchived: true } },
+      { new: true },
+    );
+    if (!category) {
+      return { success: false, error: "Category not found" };
+    }
+    revalidatePath("/dashboard/categories");
+    return {
+      success: true,
+      data: null,
+      message: "Category archived successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Can't archive category",
+    };
+  }
+}
