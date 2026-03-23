@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "./ui/button";
 import { IPagination } from "@/types/pagination.types";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "../ui/button";
 
 interface PaginationProps {
   pagination: IPagination;

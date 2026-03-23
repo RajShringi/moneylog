@@ -1,11 +1,7 @@
-import DataTable from "@/components/table/DataTable";
-import ManageTransactionForm from "@/components/ManageTransactionForm";
-import TransactionSearchInput from "@/components/TransactionSearchInput";
-import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactions } from "@/features/transactions/actions";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { transactionsColumns } from "@/features/transactions/table/transactions-table-column";
+import TransactionsPageContent from "@/components/transactions/TransactionsPageContent";
+import Link from "next/link";
 
 interface TransactionsPageProps {
   searchParams: {
@@ -35,57 +31,31 @@ export default async function TransactionsPage({
   const sortOrder =
     orderParam === "asc" || orderParam === "desc" ? orderParam : "desc";
 
-  const [categoriesResult, transactionsResult] = await Promise.all([
-    fetchCategories(),
-    fetchTransactions(currentPage, search, sortBy, sortOrder),
-  ]);
+  const transactionsResult = await fetchTransactions(
+    currentPage,
+    search,
+    sortBy,
+    sortOrder,
+  );
 
-  if (transactionsResult.success && categoriesResult.success) {
+  if (transactionsResult.success) {
     return (
-      <div>
-        <p>Transactions</p>
-        <div className="max-w-3xl mx-auto flex flex-col gap-4">
-          <Suspense fallback={<div>Loading search...</div>}>
-            <TransactionSearchInput />
-          </Suspense>
-          <Suspense fallback={<div>Loading table...</div>}>
-            <DataTable
-              columns={transactionsColumns}
-              data={transactionsResult.data.transactions}
-              pagination={{
-                currentPage,
-                total: transactionsResult.data.total,
-              }}
-            />
-          </Suspense>
+      <div className="mx-auto flex max-w-3xl flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <p>Transactions History</p>
+          <Link href="/dashboard/transactions/create">
+            create new transaction
+          </Link>
         </div>
-        <div className="my-4">
-          <ManageTransactionForm
-            allCategories={categoriesResult.data}
-            transaction={null}
-            mode="create"
+        <div>
+          <TransactionsPageContent
+            transactions={transactionsResult.data.transactions}
+            total={transactionsResult.data.total}
+            currentPage={currentPage}
           />
         </div>
       </div>
     );
   }
-
-  // return (
-  //   <div>
-  //     {/* TOP */}
-  //     {/* Here I am going to show charts */}
-  //     {/* Bottom */}
-  //     {/* Here I am going to show another component which include table to show transaction
-  //     This component take transactionResult.transaction and pass it to table and in table there is
-  //     pagination but as you can see fetchTransaction take page number as argument so how to implement it maybe using
-  //     searchParams I don't know */}
-  //     {/* {categoriesResult.success ? (
-  //       <ManageTransactionForm allCategories={categoriesResult.data} />
-  //     ) : (
-  //       <div>Something Went Wrong</div>
-  //     )} */}
-  //     <p>Transactions</p>
-  //     <DataTable columns={columns} data={transactionsResult.data} />
-  //   </div>
-  // );
+  return "Error";
 }

@@ -1,4 +1,4 @@
-import ManageTransactionForm from "@/components/ManageTransactionForm";
+import ManageTransactionForm from "@/components/transactions/ManageTransactionForm";
 import { fetchCategories } from "@/features/categories/actions";
 import { fetchTransactionById } from "@/features/transactions/actions";
 
