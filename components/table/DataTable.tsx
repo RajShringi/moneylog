@@ -15,9 +15,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Pagination from "../Pagination";
+
 import { TRANSACTIONS_PAGE_LIMIT } from "@/constants";
 import { IPagination } from "@/types/pagination.types";
+import Pagination from "./Pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

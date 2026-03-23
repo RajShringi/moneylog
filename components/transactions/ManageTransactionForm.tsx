@@ -23,23 +23,10 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-
-import {
   transactionInput,
   transactionSchema,
 } from "@/schemas/transactionsSchema";
-import { ICategory } from "@/types/category.types";
 import { useEffect, useRef } from "react";
-import { InputGroup, InputGroupTextarea } from "./ui/input-group";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Calendar } from "./ui/calendar";
 import { format } from "date-fns";
 import { TRANSACTION_TYPES } from "@/constants";
 import {
@@ -48,6 +35,18 @@ import {
 } from "@/features/transactions/actions";
 import { ITransaction } from "@/types/transaction.types";
 import { useRouter } from "next/navigation";
+import { ICategory } from "@/types/category.types";
+import { InputGroup, InputGroupTextarea } from "../ui/input-group";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
 
 interface ManageTransactionFormProps {
   allCategories: ICategory[];

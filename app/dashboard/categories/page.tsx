@@ -16,7 +16,6 @@ export default async function CategoriesPage() {
       <div className="flex flex-col gap-4">
         <CategoryCard title="Income" categories={income} />
         <CategoryCard title="Expense" categories={expense} />
-        <ManageCategoryForm mode="create" />
       </div>
     );
   }
