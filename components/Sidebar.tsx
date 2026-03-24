@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LayoutDashboard, Receipt, BarChart3 } from "lucide-react";
+import { SignOut } from "./SignOut";
 
 const links = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -27,6 +28,9 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        <div>
+          <SignOut />
+        </div>
       </nav>
     </div>
   );
