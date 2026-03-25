@@ -57,7 +57,6 @@ export default function Page() {
         password: data.password,
         callbackUrl: "/dashboard",
       });
-      router.push("/dashboard");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     }
