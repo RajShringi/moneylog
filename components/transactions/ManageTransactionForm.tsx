@@ -74,7 +74,7 @@ export default function ManageTransactionForm({
             amount: "",
             note: "",
             type: "income",
-            categoryId: "69a851afc9fce1af13876a85",
+            categoryId: "",
             date: new Date(),
           },
   });
