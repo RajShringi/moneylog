@@ -1,5 +1,4 @@
 import CategoryCard from "@/components/CategoryCard";
-import ManageCategoryForm from "@/components/ManageCategoryForm";
 import { fetchCategories } from "@/features/categories/actions";
 
 export default async function CategoriesPage() {

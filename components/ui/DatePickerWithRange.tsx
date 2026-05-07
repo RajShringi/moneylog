@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import {
   Popover,
   PopoverContent,
@@ -64,7 +64,6 @@ export default function DatePickerWithRange({
 
   return (
     <Field className="w-60">
-      <FieldLabel htmlFor="date-picker-range">Date Picker Range</FieldLabel>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button

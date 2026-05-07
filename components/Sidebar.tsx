@@ -1,6 +1,8 @@
+"use client";
 import Link from "next/link";
 import { LayoutDashboard, Receipt, BarChart3 } from "lucide-react";
 import { SignOut } from "./SignOut";
+import { useSession } from "next-auth/react";
 
 const links = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -9,21 +11,29 @@ const links = [
 ];
 
 export default function Sidebar() {
+  const session = useSession();
+
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-gray-50/40 px-3 py-4 dark:bg-zinc-900/50">
-      <div className="mb-6 flex h-14 items-center px-4">
-        <h2 className="text-lg font-bold tracking-tight">MoneyLog</h2>
+    <div className="flex h-full w-64 flex-col gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+      <div className="text-xl font-medium">Moneylog</div>
+      <div>
+        <p className="font-medium text-sm">
+          Welcome{" "}
+          <span className="capitalize">{session.data?.user?.username}</span>
+        </p>
+        <p className="text-xs text-neutral-500">{session.data?.user?.email}</p>
       </div>
-      <nav className="space-y-1">
+
+      <nav>
         {links.map((link) => {
           const Icon = link.icon;
           return (
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-50"
+              className="flex items-center gap-3 rounded-lg py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-50"
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-5 w-5" />
               {link.label}
             </Link>
           );

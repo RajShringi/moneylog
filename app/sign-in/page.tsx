@@ -55,8 +55,17 @@ export default function Page() {
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
-        callbackUrl: "/dashboard",
+        redirect: false,
       });
+
+      if (result?.error) {
+        toast.error("Invalid email or password.");
+        return;
+      }
+
+      toast.success("Successfully signed in!");
+
+      router.push("/dashboard");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     }

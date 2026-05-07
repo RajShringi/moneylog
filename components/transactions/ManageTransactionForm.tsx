@@ -118,7 +118,6 @@ export default function ManageTransactionForm({
     try {
       if (!transaction?._id) return;
       const response = await editTransaction(transaction._id, data);
-
       if (response.success) {
         toast.success("Transaction edited successfully");
         router.push("/dashboard/transactions"); // Navigate to transaction page

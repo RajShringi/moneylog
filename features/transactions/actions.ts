@@ -85,7 +85,6 @@ export async function editTransaction(
     if (!session || !session.user) {
       return { success: false, error: "User is not logged-in" };
     }
-
     const validated = transactionSchema.safeParse(data);
     if (!validated.success) {
       return { success: false, error: "Invalid data" };
@@ -365,6 +364,7 @@ export async function fetchDashboardSummary(
                   $dateToString: {
                     format: formatIncomeExpenseTrend,
                     date: "$date",
+                    timezone: "Asia/Kolkata",
                   },
                 },
                 income: {

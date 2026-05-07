@@ -22,7 +22,6 @@ export default async function DashboardPage({
 }: DashboardPageProps) {
   const params = await searchParams;
   const { from, to } = parseDateRange({ from: params.from, to: params.to });
-
   const [dashboardSummaryResult, transactionsResult] = await Promise.all([
     fetchDashboardSummary(from, to),
     fetchTransactions(),

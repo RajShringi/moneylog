@@ -4,9 +4,9 @@ import TransactionsPageContent from "@/components/transactions/TransactionsPageC
 import Link from "next/link";
 
 interface TransactionsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     [key: string]: string | string[] | undefined;
-  };
+  }>;
 }
 
 export default async function TransactionsPage({
