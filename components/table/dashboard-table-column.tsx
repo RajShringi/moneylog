@@ -3,9 +3,9 @@ import { TransactionPreview } from "@/types/transaction.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
-import { CATEGORY_COLORS } from "@/constants";
-import { CategoryColorKey } from "@/types/category.types";
 import SortableHeader from "@/components/table/SortableHeader";
+import TypeColumn from "./type-column";
+import CategoryColumn from "./category-column";
 
 export const dashboardColumns: ColumnDef<TransactionPreview>[] = [
   {
@@ -18,30 +18,12 @@ export const dashboardColumns: ColumnDef<TransactionPreview>[] = [
   {
     accessorKey: "type",
     header: "Type",
+    cell: ({ row }) => <TypeColumn row={row} />,
   },
   {
     accessorKey: "category",
     header: "Category",
-    cell: ({ row }) => {
-      const category = row.original.category;
-      if (!category) {
-        return <span className="py-1 px-2 font-medium text-xs">-</span>;
-      }
-      return category.isArchived ? (
-        <span className="text-neutral-400 text-xs py-1 px-2">
-          <span className="capitalize">{category.name}</span> deleted
-        </span>
-      ) : (
-        <span
-          className="text-xs py-1 px-2 rounded-full font-medium capitalize"
-          style={{
-            background: CATEGORY_COLORS[category.color as CategoryColorKey].bg,
-          }}
-        >
-          {category.name}
-        </span>
-      );
-    },
+    cell: ({ row }) => <CategoryColumn row={row} />,
   },
   {
     accessorKey: "note",
@@ -51,7 +33,11 @@ export const dashboardColumns: ColumnDef<TransactionPreview>[] = [
     accessorKey: "amount",
     header: () => <SortableHeader label="Amount" columnKey="amount" />,
     cell: ({ row }) => {
-      return formatCurrency(row.original.amount);
+      return (
+        <span className={`font-bold`}>
+          {formatCurrency(row.original.amount)}
+        </span>
+      );
     },
   },
 ];

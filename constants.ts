@@ -26,7 +26,7 @@ export const CATEGORY_COLORS = {
 } as const;
 
 export const TRANSACTION_TYPES = ["income", "expense"] as const;
-export const TRANSACTIONS_PAGE_LIMIT = 3;
+export const TRANSACTIONS_PAGE_LIMIT = 7;
 
 export const presetDateRanges = [
   { value: "today", label: "Today" },

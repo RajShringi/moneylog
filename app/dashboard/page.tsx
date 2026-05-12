@@ -9,7 +9,7 @@ import {
 } from "@/features/transactions/actions";
 import { parseDateRange } from "@/schemas/dateRangeSchema";
 import { Suspense } from "react";
-import { dashboardColumns } from "@/features/transactions/table/dashboard-table-column";
+import { dashboardColumns } from "@/components/table/dashboard-table-column";
 
 interface DashboardPageProps {
   searchParams: Promise<{
@@ -32,50 +32,62 @@ export default async function DashboardPage({
       dashboardSummaryResult.data;
 
     return (
-      <div className="flex flex-col flex-1 gap-4">
-        <div className="flex flex-col gap-2">
-          <Suspense fallback={<div>Loading search...</div>}>
-            <DatePickerWithRange from={from} to={to} />
-          </Suspense>
+      <div className="">
+        {/* heading */}
+        <div className="bg-white p-4">
+          <h2 className="text-3xl font-bold py-1">Dashboard</h2>
+        </div>
 
-          <div className="grid grid-cols-4 gap-4">
-            <SummaryCard
-              amount={summary.available_balance}
-              heading="Availabe balance"
-            />
-            <SummaryCard
-              amount={summary.income}
-              heading="Income"
-              from={from}
-              to={to}
-            />
-            <SummaryCard
-              amount={summary.expense}
-              heading="Expense"
-              from={from}
-              to={to}
-            />
-            <SummaryCard
-              amount={summary.balance_change}
-              heading="Balance change"
-              from={from}
-              to={to}
+        {/* dashboard ui */}
+        <div className="flex flex-col gap-4 p-4">
+          <div className="flex flex-col gap-4">
+            <Suspense fallback={<div>Loading search...</div>}>
+              <DatePickerWithRange from={from} to={to} />
+            </Suspense>
+
+            <div className="grid grid-cols-4 gap-4">
+              <SummaryCard
+                amount={summary.available_balance}
+                title="Current Balance"
+                variant="balance"
+              />
+              <SummaryCard
+                amount={summary.income}
+                title="Income"
+                from={from}
+                to={to}
+                variant="income"
+              />
+              <SummaryCard
+                amount={summary.expense}
+                title="Expenses"
+                from={from}
+                to={to}
+                variant="expense"
+              />
+              <SummaryCard
+                amount={summary.balance_change}
+                title="Net Change"
+                from={from}
+                to={to}
+                variant="change"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <IncomeExpenseTrend incomeExpenseTrend={incomeExpenseTrend} />
+            <ExpenseBreakdownByCategory
+              expenseBreakdownByCategory={expenseBreakdownByCategory}
+              expense={summary.expense}
             />
           </div>
+          <Suspense>
+            <DataTable
+              columns={dashboardColumns}
+              data={transactionsResult.data.transactions}
+            />
+          </Suspense>
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          <IncomeExpenseTrend incomeExpenseTrend={incomeExpenseTrend} />
-          <ExpenseBreakdownByCategory
-            expenseBreakdownByCategory={expenseBreakdownByCategory}
-            expense={summary.expense}
-          />
-        </div>
-        <Suspense>
-          <DataTable
-            columns={dashboardColumns}
-            data={transactionsResult.data.transactions}
-          />
-        </Suspense>
       </div>
     );
   }

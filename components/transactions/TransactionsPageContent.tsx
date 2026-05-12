@@ -1,4 +1,4 @@
-import { transactionsColumns } from "@/features/transactions/table/transactions-table-column";
+import { transactionsColumns } from "@/components/table/transactions-table-column";
 import DataTable from "../table/DataTable";
 import TransactionSearchInput from "./TransactionSearchInput";
 import { TransactionPreview } from "@/types/transaction.types";

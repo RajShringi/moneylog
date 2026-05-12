@@ -41,7 +41,7 @@ export default function TableActions({ id }: TableActionsProps) {
     <div className="flex gap-2">
       <Button
         variant="ghost"
-        className="cursor-pointer"
+        className="cursor-pointer p-0"
         disabled={isPending}
         onClick={() => router.push(`/dashboard/transactions/${id}/edit`)}
       >
@@ -51,7 +51,11 @@ export default function TableActions({ id }: TableActionsProps) {
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="ghost" className="cursor-pointer" disabled={isPending}>
+          <Button
+            variant="ghost"
+            className="cursor-pointer p-0"
+            disabled={isPending}
+          >
             <span className="sr-only">delete transaction</span>
             <Trash className="h-4 w-4" />
           </Button>

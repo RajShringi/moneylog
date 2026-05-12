@@ -5,7 +5,6 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  LabelList,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -16,6 +15,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -53,7 +53,7 @@ export function ExpenseBreakdownByCategory({
   );
 
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 border-none">
       <CardHeader>
         <CardTitle>Expense Breakdown by Category</CardTitle>
         <CardDescription className="text-pretty">
@@ -61,45 +61,45 @@ export function ExpenseBreakdownByCategory({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width={"100%"} height={300}>
+        <ResponsiveContainer width={"100%"} height={290}>
           <BarChart
             accessibilityLayer
             data={chartData}
             layout="vertical"
-            margin={{ left: 10, right: 50 }}
+            margin={{ top: 10, bottom: 10 }}
           >
             <CartesianGrid horizontal={false} strokeDasharray={"4"} />
-            <YAxis
-              dataKey="name"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tick={{ fontSize: 12 }}
-              tickFormatter={(value) =>
-                value.length > 12 ? value.slice(0, 12) + "…" : value
-              }
-            />
+            <YAxis type="category" hide />
             <XAxis dataKey="total" type="number" hide />
             <Tooltip
               cursor={false}
               content={<ExpenseBreakdownByCategoryToolTip />}
             />
 
-            <Bar dataKey="total" layout="vertical" radius={4}>
+            <Bar dataKey="total" layout="vertical" radius={5} barSize={15}>
               {chartData.map((entry) => (
                 <Cell key={entry.name} fill={entry.fill} />
               ))}
-              <LabelList
-                dataKey="percentage"
-                position="right"
-                className="fill-foreground"
-                fontSize={12}
-              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
+      <CardFooter>
+        <div className="flex items-center gap-4 flex-wrap">
+          {expenseBreakdownByCategory.map((category) => {
+            const bg = CATEGORY_COLORS[category.color as CategoryColorKey].bg;
+            return (
+              <div key={category.name} className="flex items-center gap-2">
+                <div
+                  className={`size-3 rounded-full`}
+                  style={{ backgroundColor: bg }}
+                ></div>
+                <div className="text-xs">{category.name}</div>
+              </div>
+            );
+          })}
+        </div>
+      </CardFooter>
     </Card>
   );
 }

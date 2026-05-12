@@ -2,7 +2,7 @@
 
 import { ArrowDown, ArrowDownUp, ArrowUp } from "lucide-react";
 import { SortOrder } from "mongoose";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface SortableHeaderProps {
   label: string;
@@ -15,13 +15,16 @@ export default function SortableHeader({
 }: SortableHeaderProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
 
   const sortBy = searchParams.get("sortBy");
   const sortOrder = searchParams.get("sortOrder");
 
   const isActive = columnKey === sortBy;
+  const shouldShowIcons = pathname !== "/dashboard";
 
   const handleClick = () => {
+    if (pathname === "/dashboard") return;
     const params = new URLSearchParams(searchParams);
     let newOrder: SortOrder = "asc";
 
@@ -38,19 +41,20 @@ export default function SortableHeader({
   return (
     <div onClick={handleClick} className="flex items-center gap-2">
       {label}
-      {isActive ? (
-        <span>
-          {sortOrder === "asc" ? (
-            <ArrowUp size={16} />
-          ) : (
-            <ArrowDown size={16} />
-          )}
-        </span>
-      ) : (
-        <span>
-          <ArrowDownUp size={16} />
-        </span>
-      )}
+      {shouldShowIcons &&
+        (isActive ? (
+          <span>
+            {sortOrder === "asc" ? (
+              <ArrowUp size={16} />
+            ) : (
+              <ArrowDown size={16} />
+            )}
+          </span>
+        ) : (
+          <span>
+            <ArrowDownUp size={16} />
+          </span>
+        ))}
     </div>
   );
 }

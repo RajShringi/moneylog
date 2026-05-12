@@ -1,5 +1,5 @@
 "use client";
-import { formatCompactCurrency, formatCurrency } from "@/lib/currency";
+import { formatCompactCurrency } from "@/lib/currency";
 import { parse, format } from "date-fns";
 import {
   Area,
@@ -31,8 +31,8 @@ export default function IncomeExpenseTrend({
   incomeExpenseTrend,
 }: IncomeExpenseTrendProps) {
   return (
-    <Card className="col-span-2">
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
+    <Card className="col-span-2 border-none">
+      <CardHeader className="flex items-center gap-2 space-y-0 border-b  sm:flex-row">
         <div className="grid flex-1 gap-1">
           <CardTitle>Income vs Expense Trend</CardTitle>
           <CardDescription>
