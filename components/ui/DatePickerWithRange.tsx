@@ -67,9 +67,9 @@ export default function DatePickerWithRange({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant="ghost"
             id="date-picker-range"
-            className="justify-start px-2.5 font-normal"
+            className="justify-start px-2.5 font-normal bg-white shadow"
           >
             <CalendarIcon />
             {selectedPreset ? (
