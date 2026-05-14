@@ -1,4 +1,4 @@
-import ManageCategoryForm from "@/components/ManageCategoryForm";
+import ManageCategoryForm from "@/components/categories/ManageCategoryForm";
 import { fetchCategoryById } from "@/features/categories/actions";
 
 interface EditCategoryPageProps {
