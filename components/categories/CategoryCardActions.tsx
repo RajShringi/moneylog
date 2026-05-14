@@ -1,6 +1,6 @@
 "use client";
 import { Archive, Pencil } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import Link from "next/link";
 import { archivedCategory } from "@/features/categories/actions";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./ui/alert-dialog";
+} from "../ui/alert-dialog";
 
 export default function CategoryCardActions({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition();
@@ -32,7 +32,7 @@ export default function CategoryCardActions({ id }: { id: string }) {
     });
   }
   return (
-    <div className="flex gap-2">
+    <div className="flex">
       <Button
         asChild
         disabled={isPending}

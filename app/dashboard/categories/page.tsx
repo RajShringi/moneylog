@@ -1,4 +1,4 @@
-import CategoryCard from "@/components/CategoryCard";
+import CategoriesContainer from "@/components/categories/CategoriesContainer";
 import { fetchCategories } from "@/features/categories/actions";
 
 export default async function CategoriesPage() {
@@ -13,8 +13,22 @@ export default async function CategoriesPage() {
   if (res.success) {
     return (
       <div className="flex flex-col gap-4">
-        <CategoryCard title="Income" categories={income} />
-        <CategoryCard title="Expense" categories={expense} />
+        <div className="bg-white p-4">
+          <h2 className="text-3xl font-bold py-1">Categories</h2>
+        </div>
+
+        <div className="p-4 flex flex-col gap-8">
+          <CategoriesContainer
+            type="income"
+            name="Income Categories"
+            categories={income}
+          />
+          <CategoriesContainer
+            type="expense"
+            name="Expense Categories"
+            categories={expense}
+          />
+        </div>
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import ManageCategoryForm from "@/components/ManageCategoryForm";
+import ManageCategoryForm from "@/components/categories/ManageCategoryForm";
 
 export default function CreateCategoryPage() {
   return (

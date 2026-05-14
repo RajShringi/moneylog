@@ -32,9 +32,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { createCategory, editCategory } from "@/features/categories/actions";
 import { CATEGORY_COLORS, TRANSACTION_TYPES } from "@/constants";
 import { CategoryColorKey, ICategory } from "@/types/category.types";
@@ -115,7 +115,7 @@ export default function ManageCategoryForm({
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-full sm:max-w-md">
+      <Card className="w-full sm:max-w-md border-none">
         <CardHeader>
           <CardTitle>
             {mode === "create" ? "Add Category" : "Edit Category"}
