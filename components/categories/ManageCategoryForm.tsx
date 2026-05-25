@@ -117,7 +117,7 @@ export default function ManageCategoryForm({
     <div className="flex justify-center items-center min-h-screen">
       <Card className="w-full sm:max-w-md border-none">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-neutral-700">
             {mode === "create" ? "Add Category" : "Edit Category"}
           </CardTitle>
           <CardDescription>
@@ -135,7 +135,9 @@ export default function ManageCategoryForm({
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="name">Category Name</FieldLabel>
+                        <FieldLabel htmlFor="name" className="text-neutral-700">
+                          Category Name
+                        </FieldLabel>
                         <Input
                           {...field}
                           id="name"
@@ -253,6 +255,7 @@ export default function ManageCategoryForm({
         <CardFooter>
           <Field orientation="horizontal">
             <Button
+              variant="brand"
               disabled={form.formState.isSubmitting}
               type="submit"
               form="category-form"

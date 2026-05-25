@@ -21,6 +21,11 @@ export default function Pagination({ pagination, pageCount }: PaginationProps) {
 
   return (
     <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center text-sm">
+        <span>
+          Page {pagination.currentPage} of {pageCount}
+        </span>
+      </div>
       <Button
         variant="outline"
         size="sm"

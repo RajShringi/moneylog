@@ -34,7 +34,9 @@ export default function IncomeExpenseTrend({
     <Card className="col-span-2 border-none">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b  sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle>Income vs Expense Trend</CardTitle>
+          <CardTitle className="text-neutral-700">
+            Income vs Expense Trend
+          </CardTitle>
           <CardDescription>
             Track how income and expenses change over time
           </CardDescription>

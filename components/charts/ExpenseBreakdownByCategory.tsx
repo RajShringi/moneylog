@@ -55,7 +55,9 @@ export function ExpenseBreakdownByCategory({
   return (
     <Card className="col-span-1 border-none">
       <CardHeader>
-        <CardTitle>Expense Breakdown by Category</CardTitle>
+        <CardTitle className="text-neutral-700">
+          Expense Breakdown by Category
+        </CardTitle>
         <CardDescription className="text-pretty">
           Percentage contribution of each category to total spending.
         </CardDescription>

@@ -41,7 +41,8 @@ export default function TransactionSearchInput() {
       name="search"
       value={search}
       onChange={handleSearch}
-      placeholder="Search transactions..."
+      placeholder="Search transactions by note and category..."
+      className="bg-white border border-lime-200 focus-visible:ring-lime-200"
     />
   );
 }
