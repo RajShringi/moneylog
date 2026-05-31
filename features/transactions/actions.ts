@@ -137,7 +137,8 @@ export async function fetchTransactions(
       return { success: false, error: "user is not logged-in" };
     }
     await dbConnect();
-    const skip = (page - 1) * TRANSACTIONS_PAGE_LIMIT;
+    const currentPage = Math.max(1, page);
+    const skip = (currentPage - 1) * TRANSACTIONS_PAGE_LIMIT;
 
     const pipeline: PipelineStage[] = [
       {
@@ -173,7 +174,7 @@ export async function fetchTransactions(
         $facet: {
           transactions: [
             {
-              $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1 },
+              $sort: { [sortBy]: sortOrder === "asc" ? 1 : -1, _id: 1 },
             },
             {
               $skip: skip,

@@ -1,7 +1,6 @@
 import { fetchTransactions } from "@/features/transactions/actions";
 import { redirect } from "next/navigation";
 import TransactionsPageContent from "@/components/transactions/TransactionsPageContent";
-import Link from "next/link";
 
 interface TransactionsPageProps {
   searchParams: Promise<{
