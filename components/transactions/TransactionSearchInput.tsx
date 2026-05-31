@@ -1,13 +1,11 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import useDebounce from "@/hooks/useDebounce";
 
 export default function TransactionSearchInput() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const isFirstRender = useRef(true);
 
   const [search, setSearch] = useState<string>(
     searchParams.get("search") ?? "",
@@ -17,23 +15,26 @@ export default function TransactionSearchInput() {
     setSearch(e.target.value);
   };
 
-  const debounceSearch = useDebounce(search);
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+  function updateSearchParams() {
     const params = new URLSearchParams(searchParams);
-    if (debounceSearch) {
-      params.set("search", debounceSearch);
-      params.set("page", "1");
+    if (search) {
+      params.set("search", search);
     } else {
       params.delete("search");
-      params.delete("page");
     }
-    router.push(`?${params.toString()}`);
-  }, [debounceSearch]);
+    params.set("page", "1");
+    router.replace(`?${params.toString()}`);
+  }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      updateSearchParams();
+    }, 500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [search]);
 
   return (
     <Input
@@ -41,7 +42,8 @@ export default function TransactionSearchInput() {
       name="search"
       value={search}
       onChange={handleSearch}
-      placeholder="Search transactions..."
+      placeholder="Search transactions by note and category..."
+      className="bg-white border border-lime-200 focus-visible:ring-lime-200"
     />
   );
 }

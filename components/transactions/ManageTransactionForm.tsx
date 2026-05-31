@@ -333,6 +333,7 @@ export default function ManageTransactionForm({
         <CardFooter>
           <Field orientation="horizontal">
             <Button
+              variant={"brand"}
               disabled={form.formState.isSubmitting}
               type="submit"
               form="transaction-form"

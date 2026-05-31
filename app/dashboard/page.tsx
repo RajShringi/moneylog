@@ -39,7 +39,7 @@ export default async function DashboardPage({
         </div>
 
         {/* dashboard ui */}
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-8 p-4">
           <div className="flex flex-col gap-4">
             <Suspense fallback={<div>Loading search...</div>}>
               <DatePickerWithRange from={from} to={to} />
@@ -81,12 +81,17 @@ export default async function DashboardPage({
               expense={summary.expense}
             />
           </div>
-          <Suspense>
-            <DataTable
-              columns={dashboardColumns}
-              data={transactionsResult.data.transactions}
-            />
-          </Suspense>
+          <div className="flex flex-col gap-2">
+            <div>
+              <h4 className="font-bold text-sm">Recent Transactions</h4>
+            </div>
+            <Suspense>
+              <DataTable
+                columns={dashboardColumns}
+                data={transactionsResult.data.transactions}
+              />
+            </Suspense>
+          </div>
         </div>
       </div>
     );
