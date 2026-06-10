@@ -62,7 +62,10 @@ export default function Sidebar() {
               </p>
             </div>
           </div>
-          <SignOut />
+          <SignOut
+            variant={"ghost"}
+            className="flex w-full items-start justify-start gap-3 rounded-lg p-2 text-sm font-semibold text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-red-600 cursor-pointer"
+          />
         </div>
       </nav>
     </div>

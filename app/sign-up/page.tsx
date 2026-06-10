@@ -63,7 +63,7 @@ export default function Page() {
       });
       if (result.data.success) {
         toast.success("Account created successfully! Please sign in.");
-        router.push("/sign-in");
+        router.replace("/sign-in");
       } else {
         toast.error(result.data.message || "Error creating account.");
       }

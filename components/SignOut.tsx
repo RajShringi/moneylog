@@ -1,16 +1,28 @@
 import { logout } from "@/features/auth/actions";
+import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { ComponentProps } from "react";
 
-export function SignOut() {
+type SignOutProps = ComponentProps<typeof Button>;
+
+export function SignOut({
+  className,
+  variant = "ghost",
+  size = "default",
+  ...props
+}: SignOutProps) {
   return (
     <form action={logout}>
-      <button
+      <Button
         type="submit"
-        className="flex w-full items-center gap-3 rounded-lg p-2 text-sm font-semibold text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-red-600 cursor-pointer"
+        variant={variant}
+        size={size}
+        className={className}
+        {...props}
       >
-        <LogOut className="h-5 w-5" />
+        <LogOut className="h-4 w-4" />
         Sign Out
-      </button>
+      </Button>
     </form>
   );
 }

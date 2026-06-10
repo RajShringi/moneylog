@@ -65,7 +65,7 @@ export default function Page() {
 
       toast.success("Successfully signed in!");
 
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     }
