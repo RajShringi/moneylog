@@ -74,6 +74,7 @@ export default function ManageCategoryForm({
       const response = await createCategory(data);
       if (response.success) {
         toast.success("Category created successfully");
+        router.push("/dashboard/categories");
         form.reset();
       } else {
         toast.error(response.error);
