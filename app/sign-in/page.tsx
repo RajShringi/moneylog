@@ -64,7 +64,7 @@ export default function Page() {
       }
 
       toast.success("Successfully signed in!");
-
+      console.log("about to redirect");
       router.replace("/dashboard");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");

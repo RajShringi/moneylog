@@ -7,7 +7,7 @@ export async function proxy(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
     // secureCookie: true,
   });
-  // console.log("TOKEN:", token);
+  console.log("TOKEN:", token);
   const isLoggedIn = !!token;
   const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
 
