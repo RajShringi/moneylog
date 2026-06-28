@@ -39,26 +39,25 @@ export default async function TransactionsPage({
 
   if (transactionsResult.success) {
     return (
-      <div>
-        {/* heading */}
-        <div className="bg-white p-4">
-          <h2 className="text-3xl font-bold py-1">Transactions</h2>
+      <div className="flex flex-col">
+        {/* Heading */}
+        <div className="bg-white p-4 sm:px-6">
+          <h2 className="py-1 text-2xl font-bold sm:text-3xl">Transactions</h2>
         </div>
 
-        {/* bottom */}
-        <div className="mx-auto flex max-w-5xl flex-col gap-4 p-4">
-          <div className="flex items-center justify-between">
-            <p className="font-medium uppercase tracking-wider">
+        {/* Content */}
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-medium uppercase tracking-wider sm:text-base">
               Transactions History
             </p>
           </div>
-          <div>
-            <TransactionsPageContent
-              transactions={transactionsResult.data.transactions}
-              total={transactionsResult.data.total}
-              currentPage={currentPage}
-            />
-          </div>
+
+          <TransactionsPageContent
+            transactions={transactionsResult.data.transactions}
+            total={transactionsResult.data.total}
+            currentPage={currentPage}
+          />
         </div>
       </div>
     );

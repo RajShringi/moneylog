@@ -32,25 +32,27 @@ export default async function DashboardPage({
       dashboardSummaryResult.data;
 
     return (
-      <div className="">
-        {/* heading */}
-        <div className="bg-white p-4">
-          <h2 className="text-3xl font-bold py-1">Dashboard</h2>
+      <div className="min-h-screen bg-gray-50">
+        {/* Heading */}
+        <div className="bg-white p-4 sm:px-6">
+          <h2 className="text-2xl font-bold sm:text-3xl">Dashboard</h2>
         </div>
 
-        {/* dashboard ui */}
-        <div className="flex flex-col gap-8 p-4">
+        {/* Dashboard */}
+        <div className="flex flex-col gap-8 p-4 sm:p-6">
           <div className="flex flex-col gap-4">
             <Suspense fallback={<div>Loading search...</div>}>
               <DatePickerWithRange from={from} to={to} />
             </Suspense>
 
-            <div className="grid grid-cols-4 gap-4">
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <SummaryCard
                 amount={summary.available_balance}
                 title="Current Balance"
                 variant="balance"
               />
+
               <SummaryCard
                 amount={summary.income}
                 title="Income"
@@ -58,6 +60,7 @@ export default async function DashboardPage({
                 to={to}
                 variant="income"
               />
+
               <SummaryCard
                 amount={summary.expense}
                 title="Expenses"
@@ -65,6 +68,7 @@ export default async function DashboardPage({
                 to={to}
                 variant="expense"
               />
+
               <SummaryCard
                 amount={summary.balance_change}
                 title="Net Change"
@@ -74,22 +78,32 @@ export default async function DashboardPage({
               />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <IncomeExpenseTrend incomeExpenseTrend={incomeExpenseTrend} />
-            <ExpenseBreakdownByCategory
-              expenseBreakdownByCategory={expenseBreakdownByCategory}
-              expense={summary.expense}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <div>
-              <h4 className="font-bold text-sm">Recent Transactions</h4>
+
+          {/* Charts */}
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <div className="xl:col-span-2">
+              <IncomeExpenseTrend incomeExpenseTrend={incomeExpenseTrend} />
             </div>
-            <Suspense>
-              <DataTable
-                columns={dashboardColumns}
-                data={transactionsResult.data.transactions}
+
+            <div className="xl:col-span-1">
+              <ExpenseBreakdownByCategory
+                expenseBreakdownByCategory={expenseBreakdownByCategory}
+                expense={summary.expense}
               />
+            </div>
+          </div>
+
+          {/* Recent Transactions */}
+          <div className="flex flex-col gap-2">
+            <h4 className="text-sm font-bold">Recent Transactions</h4>
+
+            <Suspense>
+              <div className="overflow-x-auto">
+                <DataTable
+                  columns={dashboardColumns}
+                  data={transactionsResult.data.transactions}
+                />
+              </div>
             </Suspense>
           </div>
         </div>

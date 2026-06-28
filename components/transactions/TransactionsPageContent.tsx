@@ -16,23 +16,30 @@ export default function TransactionsPageContent({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-6">
-        <TransactionSearchInput />
-        <Button variant="brand">
+      {/* Search & Create */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="w-full sm:max-w-md">
+          <TransactionSearchInput />
+        </div>
+
+        <Button variant="brand" className="w-full sm:w-auto" asChild>
           <Link href="/dashboard/transactions/create">
-            + create new transaction
+            + Create New Transaction
           </Link>
         </Button>
       </div>
 
-      <DataTable
-        columns={transactionsColumns}
-        data={transactions}
-        pagination={{
-          currentPage,
-          total: total,
-        }}
-      />
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <DataTable
+          columns={transactionsColumns}
+          data={transactions}
+          pagination={{
+            currentPage,
+            total,
+          }}
+        />
+      </div>
     </div>
   );
 }

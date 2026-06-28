@@ -32,7 +32,7 @@ export default function CategoryCardActions({ id }: { id: string }) {
     });
   }
   return (
-    <div className="flex">
+    <div className="flex shrink-0">
       <Button
         asChild
         disabled={isPending}
