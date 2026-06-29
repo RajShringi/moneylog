@@ -13,16 +13,17 @@ export default async function CategoriesPage() {
   if (res.success) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="bg-white p-4">
-          <h2 className="text-3xl font-bold py-1">Categories</h2>
+        <div className="bg-white p-4 sm:px-6">
+          <h2 className="py-1 text-2xl font-bold sm:text-3xl">Categories</h2>
         </div>
 
-        <div className="p-4 flex flex-col gap-8">
+        <div className="flex flex-col gap-8 p-4 sm:p-6">
           <CategoriesContainer
             type="income"
             name="Income Categories"
             categories={income}
           />
+
           <CategoriesContainer
             type="expense"
             name="Expense Categories"

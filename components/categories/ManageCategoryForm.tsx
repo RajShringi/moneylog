@@ -115,21 +115,29 @@ export default function ManageCategoryForm({
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-full sm:max-w-md border-none">
-        <CardHeader>
-          <CardTitle className="text-neutral-700">
+    <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 py-8 sm:px-6">
+      <Card className="w-full max-w-md shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-2xl font-semibold text-neutral-700">
             {mode === "create" ? "Add Category" : "Edit Category"}
           </CardTitle>
-          <CardDescription>
-            {mode === "create" ? "Create a new category" : "Edit your category"}
+
+          <CardDescription className="text-sm leading-6">
+            {mode === "create"
+              ? "Create a new category."
+              : "Update your category."}
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form id="category-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            id="category-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-5"
+          >
             <FieldGroup>
-              <div className="flex items-start justify-between gap-4">
-                {/* Name */}
+              {/* Name + Color */}
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div className="flex-1">
                   <Controller
                     name="name"
@@ -139,13 +147,15 @@ export default function ManageCategoryForm({
                         <FieldLabel htmlFor="name" className="text-neutral-700">
                           Category Name
                         </FieldLabel>
+
                         <Input
                           {...field}
                           id="name"
-                          aria-invalid={fieldState.invalid}
-                          placeholder="please enter your category name"
+                          placeholder="Enter category name"
                           autoComplete="off"
+                          aria-invalid={fieldState.invalid}
                         />
+
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
                         )}
@@ -154,22 +164,13 @@ export default function ManageCategoryForm({
                   />
                 </div>
 
-                {/* color */}
-                <div className="">
+                <div className="sm:w-28">
                   <Controller
                     name="color"
                     control={form.control}
                     render={({ field, fieldState }) => (
-                      <Field
-                        orientation="responsive"
-                        data-invalid={fieldState.invalid}
-                      >
-                        <FieldLabel htmlFor="form-rhf-select-color">
-                          Color
-                        </FieldLabel>
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="category-color">Color</FieldLabel>
 
                         <Select
                           name={field.name}
@@ -177,16 +178,17 @@ export default function ManageCategoryForm({
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger
-                            id="form-rhf-select-color"
+                            id="category-color"
                             aria-invalid={fieldState.invalid}
                           >
                             <SelectValue placeholder="Select" />
                           </SelectTrigger>
+
                           <SelectContent position="item-aligned">
                             {Object.keys(CATEGORY_COLORS).map((color) => (
                               <SelectItem key={color} value={color}>
                                 <span
-                                  className="px-3 font-bold rounded-full text-neutral-600"
+                                  className="rounded-full px-3 font-bold text-neutral-700"
                                   style={{
                                     background:
                                       CATEGORY_COLORS[color as CategoryColorKey]
@@ -199,13 +201,16 @@ export default function ManageCategoryForm({
                             ))}
                           </SelectContent>
                         </Select>
+
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
                       </Field>
                     )}
                   />
                 </div>
               </div>
 
-              {/* type */}
               {mode === "create" && (
                 <Controller
                   name="type"
@@ -213,36 +218,33 @@ export default function ManageCategoryForm({
                   render={({ field, fieldState }) => (
                     <FieldSet>
                       <FieldLabel>Type</FieldLabel>
+
                       <FieldDescription>
-                        Select transaction type Income | Expense
+                        Select the transaction type.
                       </FieldDescription>
+
                       <RadioGroup
                         name={field.name}
                         value={field.value}
                         onValueChange={field.onChange}
-                        className="flex gap-4"
+                        className="flex flex-col gap-3 sm:flex-row sm:gap-6"
                       >
                         {TRANSACTION_TYPES.map((type) => (
-                          <FieldLabel
-                            key={type}
-                            htmlFor={`form-rhf-radiogroup-${type}`}
-                          >
-                            <Field
-                              orientation="horizontal"
-                              data-invalid={fieldState.invalid}
-                            >
+                          <FieldLabel key={type} htmlFor={`type-${type}`}>
+                            <Field orientation="horizontal">
                               <FieldContent>
                                 <FieldTitle>{type}</FieldTitle>
                               </FieldContent>
+
                               <RadioGroupItem
+                                id={`type-${type}`}
                                 value={type}
-                                id={`form-rhf-radiogroup-${type}`}
-                                aria-invalid={fieldState.invalid}
                               />
                             </Field>
                           </FieldLabel>
                         ))}
                       </RadioGroup>
+
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
                       )}
@@ -253,19 +255,23 @@ export default function ManageCategoryForm({
             </FieldGroup>
           </form>
         </CardContent>
+
         <CardFooter>
-          <Field orientation="horizontal">
-            <Button
-              variant="brand"
-              disabled={form.formState.isSubmitting}
-              type="submit"
-              form="category-form"
-            >
-              {form.formState.isSubmitting ? "Loading..." : "Submit"}
-            </Button>
-          </Field>
+          <Button
+            className="w-full"
+            variant="brand"
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            form="category-form"
+          >
+            {form.formState.isSubmitting
+              ? "Saving..."
+              : mode === "create"
+                ? "Create Category"
+                : "Save Changes"}
+          </Button>
         </CardFooter>
       </Card>
-    </div>
+    </main>
   );
 }

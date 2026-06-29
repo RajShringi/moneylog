@@ -42,6 +42,7 @@ const formSchema = z.object({
 
 export default function Page() {
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,23 +66,28 @@ export default function Page() {
 
       toast.success("Successfully signed in!");
       router.replace("/dashboard");
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     }
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-full sm:max-w-md">
-        <CardHeader>
-          <CardTitle>Sign-In</CardTitle>
-          <CardDescription>
-            Welcome to moneylog! Please enter your credentials to access your
-            account.
+    <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 py-8 sm:px-6">
+      <Card className="w-full max-w-md shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-2xl font-semibold">Sign In</CardTitle>
+
+          <CardDescription className="text-sm leading-6">
+            Welcome to Moneylog! Enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            id="login-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-5"
+          >
             <FieldGroup>
               <Controller
                 name="email"
@@ -89,33 +95,39 @@ export default function Page() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
+
                     <Input
                       {...field}
                       id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      autoComplete="email"
                       aria-invalid={fieldState.invalid}
-                      placeholder="please enter your email"
-                      autoComplete="off"
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
+
               <Controller
                 name="password"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
+
                     <Input
                       {...field}
                       id="password"
                       type="password"
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
                       aria-invalid={fieldState.invalid}
-                      placeholder="please enter your password"
-                      autoComplete="off"
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -125,18 +137,18 @@ export default function Page() {
             </FieldGroup>
           </form>
         </CardContent>
+
         <CardFooter>
-          <Field orientation="horizontal">
-            <Button
-              disabled={form.formState.isSubmitting}
-              type="submit"
-              form="login-form"
-            >
-              {form.formState.isSubmitting ? "Loading" : "Submit"}
-            </Button>
-          </Field>
+          <Button
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            form="login-form"
+          >
+            {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+          </Button>
         </CardFooter>
       </Card>
-    </div>
+    </main>
   );
 }

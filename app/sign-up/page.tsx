@@ -28,6 +28,7 @@ const formSchema = z.object({
   username: z
     .string()
     .min(3, { message: "Username must be at least 3 characters long" }),
+
   email: z.string().email({
     message: "Invalid email address",
   }),
@@ -45,6 +46,7 @@ const formSchema = z.object({
 
 export default function Page() {
   const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,6 +63,7 @@ export default function Page() {
         email: data.email,
         password: data.password,
       });
+
       if (result.data.success) {
         toast.success("Account created successfully! Please sign in.");
         router.replace("/sign-in");
@@ -77,16 +80,22 @@ export default function Page() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-full sm:max-w-md">
-        <CardHeader>
-          <CardTitle>Sign-Up</CardTitle>
-          <CardDescription>
-            Join Moneylog! Sign up to start your anonymous adventure
+    <main className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 py-8 sm:px-6">
+      <Card className="w-full max-w-md shadow-sm">
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-2xl font-semibold">Sign Up</CardTitle>
+
+          <CardDescription className="text-sm leading-6">
+            Join Moneylog! Create your account and start tracking your finances.
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            id="signup-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-5"
+          >
             <FieldGroup>
               <Controller
                 name="username"
@@ -94,52 +103,61 @@ export default function Page() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="username">Username</FieldLabel>
+
                     <Input
                       {...field}
                       id="username"
+                      placeholder="Enter your username"
+                      autoComplete="username"
                       aria-invalid={fieldState.invalid}
-                      placeholder="please enter your username"
-                      autoComplete="off"
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
+
               <Controller
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
+
                     <Input
                       {...field}
                       id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      autoComplete="email"
                       aria-invalid={fieldState.invalid}
-                      placeholder="please enter your email"
-                      autoComplete="off"
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
+
               <Controller
                 name="password"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
+
                     <Input
                       {...field}
                       id="password"
                       type="password"
+                      placeholder="Enter your password"
+                      autoComplete="new-password"
                       aria-invalid={fieldState.invalid}
-                      placeholder="please enter your password"
-                      autoComplete="off"
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -149,18 +167,20 @@ export default function Page() {
             </FieldGroup>
           </form>
         </CardContent>
+
         <CardFooter>
-          <Field orientation="horizontal">
-            <Button
-              disabled={form.formState.isSubmitting}
-              type="submit"
-              form="login-form"
-            >
-              {form.formState.isSubmitting ? "Loading" : "Submit"}
-            </Button>
-          </Field>
+          <Button
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            form="signup-form"
+          >
+            {form.formState.isSubmitting
+              ? "Creating account..."
+              : "Create Account"}
+          </Button>
         </CardFooter>
       </Card>
-    </div>
+    </main>
   );
 }

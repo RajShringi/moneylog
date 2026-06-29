@@ -12,20 +12,25 @@ interface CategoryCardProps {
 export default function CategoryCard({ type, category }: CategoryCardProps) {
   return (
     <div
-      className="flex items-center justify-between py-2 px-2 bg-white shadow rounded-lg 
-      transition-all hover:-translate-y-1 hover:shadow-md"
+      className="flex items-center justify-between gap-3 rounded-lg bg-white p-3 shadow transition-all hover:-translate-y-1 hover:shadow-md"
       style={{
-        outline: `2px solid ${CATEGORY_COLORS[category.color as CategoryColorKey].bg}`,
+        outline: `2px solid ${
+          CATEGORY_COLORS[category.color as CategoryColorKey].bg
+        }`,
       }}
     >
-      <div className="flex items-center gap-4">
-        <div className="bg-neutral-50 size-12 flex items-center justify-center rounded-full">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-50">
           <PiggyBank
-            className={`w-5 h-5 ${type === "income" ? "text-lime-300" : "text-rose-300"}`}
+            className={`h-5 w-5 ${
+              type === "income" ? "text-lime-300" : "text-rose-300"
+            }`}
           />
         </div>
-        <div className="text-sm">{category.name}</div>
+
+        <p className="truncate text-sm font-medium">{category.name}</p>
       </div>
+
       <CategoryCardActions id={category._id} />
     </div>
   );

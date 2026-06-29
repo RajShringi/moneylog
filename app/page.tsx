@@ -9,90 +9,85 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <div className="flex flex-col gap-12 bg-white min-h-screen">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* Navbar */}
-      <div className="p-4 border-b border-neutral-100 bg-white">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-lime-100 text-lime-800 flex items-center justify-center">
+      <header className="border-b border-neutral-100 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lime-100 text-lime-800">
               <Wallet />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-medium ">Moneylog</span>
+
+            <span className="text-lg font-semibold sm:text-xl">Moneylog</span>
+          </div>
+
+          {session ? (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="link"
+                className="cursor-pointer hover:text-lime-800"
+                asChild
+              >
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+
+              <SignOut variant="brand" />
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="link"
+                className="cursor-pointer hover:text-lime-800"
+                asChild
+              >
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
 
-          <div>
-            {session ? (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-neutral-500">
-                  <Button
-                    variant="link"
-                    className="cursor-pointer hover:text-lime-800"
-                  >
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                </span>
-                <SignOut variant={"brand"} />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link href={"/sign-in"}>
-                  <Button
-                    variant="link"
-                    className="cursor-pointer hover:text-lime-800"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
-
-                <Link href={"/sign-up"}>
-                  <Button
-                    variant="brand"
-                    className="cursor-pointer hover:text-lime-800"
-                  >
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
+              <Button variant="brand" asChild>
+                <Link href="/sign-up">Sign Up</Link>
+              </Button>
+            </div>
+          )}
         </div>
-      </div>
+      </header>
+
       {/* Hero */}
-      <div className="max-w-3xl w-full mx-auto py-4">
-        <div className="text-center text-pretty space-y-6">
-          <div className="flex flex-col gap-6  p-4 rounded-lg">
-            <h1 className="text-6xl font-bold text-lime-200">
+      <main className="flex-1">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 py-12 sm:py-16 lg:py-24">
+          <div className="max-w-4xl text-center">
+            <h1 className="text-4xl font-bold leading-tight text-lime-200 sm:text-5xl lg:text-6xl">
               Track income and expenses without spreadsheets.
             </h1>
-            <p className="text-lg text-neutral-500 mt-4">
+
+            <p className="mx-auto mt-6 max-w-2xl text-base text-neutral-500 sm:text-lg">
               Record every transaction, organize your finances, and understand
               where your money goes.
             </p>
-            <Link href="/dashboard" className="inline-block">
-              <Button variant={"brand"}>Start Tracking for free</Button>
-            </Link>
+
+            <div className="mt-8">
+              <Button variant="brand" size="lg" asChild>
+                <Link href="/dashboard">Start Tracking for free</Link>
+              </Button>
+            </div>
           </div>
 
-          <div className=" rounded-lg p-2">
+          <div className="mt-12 w-full max-w-6xl">
             <Image
               src="/images/dashboard.png"
-              alt="Dashboard"
-              width={800}
-              height={600}
-              className="mask-l-from-90% mask-r-from-70%"
+              alt="Moneylog Dashboard"
+              width={1400}
+              height={900}
+              priority
+              className="h-auto w-full rounded-xl border border-neutral-200 shadow-xl"
             />
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
-      <div>
-        <div className="border-t border-neutral-100 bg-white py-4 text-center text-sm text-neutral-500 ">
-          &copy; {new Date().getFullYear()} Moneylog. All rights reserved.
-        </div>
-      </div>
+      <footer className="border-t border-neutral-100 py-6 text-center text-sm text-neutral-500">
+        &copy; {new Date().getFullYear()} Moneylog. All rights reserved.
+      </footer>
     </div>
   );
 }
