@@ -31,9 +31,11 @@ export const dateRangeSchema = z
     to: dateStringSchema,
   })
   .transform((data) => {
-    const today = startOfDay(new Date());
+    const today = new Date();
+
     const from = data.from ?? startOfMonth(today);
-    const to = data.to ?? endOfDay(today);
+    const to = data.to ?? today;
+
     return { from, to };
   })
   .refine(
