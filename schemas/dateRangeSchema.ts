@@ -31,9 +31,27 @@ export const dateRangeSchema = z
     to: dateStringSchema,
   })
   .transform((data) => {
+    console.log("Raw data.from:", data.from);
+    console.log("Raw data.to:", data.to);
+
     const today = startOfDay(new Date());
+    console.log("today:", today);
+    console.log("endOfDay(today):", endOfDay(today));
+
     const from = data.from ?? startOfMonth(today);
     const to = data.to ?? endOfDay(today);
+
+    console.log("final from:", from);
+    console.log("final to:", to);
+
+    console.log(
+      "Server timezone:",
+      Intl.DateTimeFormat().resolvedOptions().timeZone,
+    );
+    console.log("Server from:", from);
+    console.log("Server to:", to);
+    console.log("Server to ISO:", to.toISOString());
+
     return { from, to };
   })
   .refine(
