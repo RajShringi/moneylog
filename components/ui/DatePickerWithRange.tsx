@@ -29,10 +29,6 @@ export default function DatePickerWithRange({
     from,
     to,
   });
-  console.log("Client from:", from);
-  console.log("Client to:", to);
-  console.log("Client to ISO:", to.toISOString());
-  console.log("Client formatted:", format(to, "yyyy-MM-dd"));
 
   const [selectedPreset, setSelectedPreset] = useState<presetValue | undefined>(
     undefined,
@@ -42,21 +38,11 @@ export default function DatePickerWithRange({
   const router = useRouter();
 
   const updateQueryParams = (from: Date, to: Date) => {
-    console.log("Updating URL");
-    console.log("from:", from);
-    console.log("to:", to);
-    console.log("formatted to:", format(to, "yyyy-MM-dd"));
     const params = new URLSearchParams(searchParams);
     params.set("from", format(from, "yyyy-MM-dd"));
     params.set("to", format(to, "yyyy-MM-dd"));
     router.replace(`?${params.toString()}`);
   };
-
-  useEffect(() => {
-    console.log("State from:", date?.from);
-    console.log("State to:", date?.to);
-    console.log("State formatted:", date?.to && format(date.to, "yyyy-MM-dd"));
-  }, []);
 
   const handlePresetSelect = (preset: presetValue) => {
     setSelectedPreset(preset);
